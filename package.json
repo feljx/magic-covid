@@ -1,0 +1,16 @@
+{
+	"name": "react-static-example-basic",
+	"private": true,
+	"scripts": {
+		"start": "react-static start",
+		"stage": "react-static build --staging",
+		"build": "react-static build",
+		"analyze": "react-static build --analyze",
+		"serve": "serve dist -p 3000",
+		"feed": "node data-input/feed.js"
+	},
+	"dependencies": {
+		"pg": "^8.3.0"
+	},
+	"devDependencies": {}
+}
