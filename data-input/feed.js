@@ -5,7 +5,9 @@ const data = require('../data-covid/covid19.json')
 const CONTINENTS = 'continents'
 
 function create_table (table_name, col_string) {
-	query(`CREATE TABLE ${table_name} (id SERIAL, ${col_string}, PRIMARY KEY (id));`)
+	query(
+		`CREATE TABLE ${table_name} (id SERIAL, ${col_string}, PRIMARY KEY (id));`
+	)
 }
 
 function drop_table (table_name) {
@@ -28,7 +30,9 @@ function add_continents () {
 		if (!already_added) continents.push(continent)
 	}
 	for (const continent of continents) {
-		query(`INSERT INTO ${CONTINENTS} (name, pop) VALUES (${continent}, NULL);`)
+		query(
+			`INSERT INTO ${CONTINENTS} (name, pop) VALUES (${continent}, NULL);`
+		)
 	}
 }
 

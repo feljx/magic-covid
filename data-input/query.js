@@ -5,7 +5,7 @@ const URL =
 
 const client = new pg.Client(URL)
 
-function query (query_string) {
+function query(query_string) {
 	client.connect(function (err) {
 		if (err) console.error(err)
 		client.query(query_string, function (err, result) {
