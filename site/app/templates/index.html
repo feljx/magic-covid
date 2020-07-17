@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block scripts %}
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    
+    <script>
+        google.charts.load('current', {
+            'packages': ['geochart'],
+            'mapsApiKey': 'AIzaSyAAYhsRZFxLK7EwtE2isGGNk12bvm_2KBM'
+            
+        });
+        google.charts.setOnLoadCallback(drawMap);
+        
+        function drawMap() {
+            var data = google.visualization.arrayToDataTable(
+                {{ data|tojson }}
+                );
+            
+            var options = {
+                colorAxis: {
+                    colors: ['#1A936F', '#E8DCB9', '#E5B25D', '#ad6a6c']
+                },
+                backgroundColor: '#253237'
+
+            };
+            
+            var chart = new google.visualization.GeoChart(document.getElementById('chart_div'));
+            
+            chart.draw(data, options);
+        };
+    </script>
+        
+{% endblock %}
+
+{% block content %}
+    <h2>{{ title }}</h2>
+    <form>
+        <input type="date" id="date" name="date" 
+            value="2020-07-10" min="2019-12-31" max="2020-07-16">
+        <input type="submit">
+    </form>
+
+    <div id="chart_div"></div> 
+{% endblock %}
