@@ -5,7 +5,11 @@
 		"dev": "next",
 		"build": "next build",
 		"start": "NODE_ENV=production && pm2 start npx --name 'next server' -- next -- start",
-		"feed": "node data-input/feed.js"
+		"feed": "node data-input/feed.js",
+		"serve": "serve dist -p 3000",
+		"venv": "python3 -m venv venv",
+		"vact": "source venv/bin/activate",
+		"vinstall": "pip install -r requirements.txt"
 	},
 	"dependencies": {
 		"next": "^9.4.4",

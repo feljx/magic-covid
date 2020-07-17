@@ -1,5 +1,6 @@
 _site
 .DS_store
+site/app/__pycache__
 
 
 # Logs
@@ -106,3 +107,6 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Python venv
+venv
