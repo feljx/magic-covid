@@ -23,12 +23,8 @@ def country():
     geo_id = request.args.get("c")
     data = get_country_data(geo_id)
     return render_template("country.html",
-        country = data["country_name"],
-        data = [
-            ["Date", "Cases"],
-            
-        ]
-        )
+        country = data["country_name"]
+    )
 
 db = Database()
 
@@ -86,11 +82,7 @@ def get_country_data(geo_id, start=None, end=None):
             if c.geo_id == geo_id
         )
 
-    # result = {
-    #     "country_name": country_name,
-    #     "data": 
-    # }
-    return result
+    return None
 
 @db_session
 def get_country_name(geo_id):
