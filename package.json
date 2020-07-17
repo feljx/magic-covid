@@ -7,7 +7,10 @@
 		"build": "react-static build",
 		"analyze": "react-static build --analyze",
 		"serve": "serve dist -p 3000",
-		"feed": "node data-input/feed.js"
+		"feed": "node data-input/feed.js",
+		"venv": "python3 -m venv venv",
+		"vact": "source venv/bin/activate",
+		"vinstall": "pip install -r requirements.txt"
 	},
 	"dependencies": {
 		"pg": "^8.3.0"
