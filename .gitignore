@@ -1,6 +1,7 @@
 _site
 .DS_store
 site/app/__pycache__
+.venv
 
 
 # Logs
