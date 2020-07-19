@@ -5,10 +5,13 @@
 		"dev": "next",
 		"build": "next build",
 		"start": "NODE_ENV=production && pm2 start npx --name 'next server' -- next -- start",
-		"feed": "node data-input/feed.js"
+		"parse": "node src/db/parse.js",
+		"feed": "node src/db/feed.js",
+		"clear": "node src/db/clear.js"
 	},
 	"dependencies": {
 		"next": "^9.4.4",
+		"pg": "^8.3.0",
 		"react": "^16.13.1",
 		"react-dom": "^16.13.1"
 	},

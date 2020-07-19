@@ -1,5 +1,11 @@
 DROP TABLE IF EXISTS datapoints;
-CREATE TABLE datapoints (country text REFERENCES countries, time date, cases bigint NULL, deaths bigint NULL, PRIMARY KEY(country, time));
+CREATE TABLE datapoints (
+	country text REFERENCES countries,
+	time date,
+	cases bigint NULL,
+	deaths bigint NULL,
+	PRIMARY KEY(country, time)
+);
 INSERT INTO datapoints VALUES ('Afghanistan', '2020-6-14', 556, 5);
 INSERT INTO datapoints VALUES ('Afghanistan', '2020-6-13', 656, 20);
 INSERT INTO datapoints VALUES ('Afghanistan', '2020-6-12', 747, 21);

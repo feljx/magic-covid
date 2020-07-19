@@ -1,5 +1,11 @@
 DROP TABLE IF EXISTS countries;
-CREATE TABLE countries (name text, code varchar(6) NULL, pop bigint DEFAULT NULL, continent text REFERENCES continents, PRIMARY KEY(name));
+CREATE TABLE countries (
+	name text,
+	code varchar(6) NULL,
+	pop bigint DEFAULT NULL,
+	continent text REFERENCES continents,
+	PRIMARY KEY(name)
+);
 INSERT INTO countries VALUES ('Afghanistan', 'AFG', 37172386, 'Asia');
 INSERT INTO countries VALUES ('Albania', 'ALB', 2866376, 'Europe');
 INSERT INTO countries VALUES ('Algeria', 'DZA', 42228429, 'Africa');

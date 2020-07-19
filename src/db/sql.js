@@ -4,9 +4,12 @@ const covid_data = require('./raw/covid19.json')
 function create_table (name, cols, primary_key) {
 	const col_string = Object.entries(cols)
 		.map(([ col, type ]) => `${col} ${type}`)
-		.join(', ')
+		.join(',\n\t')
 	return `DROP TABLE IF EXISTS ${name};
-CREATE TABLE ${name} (${col_string}, PRIMARY KEY(${primary_key}));`
+CREATE TABLE ${name} (
+	${col_string},
+	PRIMARY KEY(${primary_key})
+);`
 }
 
 function insert_into (table, ...vals) {
