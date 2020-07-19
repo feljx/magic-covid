@@ -5,7 +5,7 @@ function Home (props) {
 		<li key={r.name}>{r.name.split('_').join(' ')}</li>
 	)
 	const items = props.rows.map(row_to_list_item)
-	return <ul className={styles.main}>{items}</ul>
+	return <ul className={styles.list}>{items}</ul>
 }
 
 export default Home
