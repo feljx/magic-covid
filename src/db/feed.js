@@ -4,7 +4,7 @@ const child_process = require('child_process')
 // constants
 const DB_NAME = 'cf'
 const POSTGRES_IMPORT_CMD = `psql -d ${DB_NAME} -f`
-const SQL_FILES_DIR = 'data/sql'
+const SQL_FILES_DIR = 'src/db/sql'
 // sql files to import (order matters because of foreign key references)
 const SQL_FILES_TO_IMPORT = [ 'continents', 'countries', 'datapoints' ]
 
