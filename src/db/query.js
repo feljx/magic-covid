@@ -1,12 +1,16 @@
 const { Pool } = require('pg')
+const os = require('os')
+
+const IS_MAC = os.platform() === 'darwin'
+const SOCKET_PATH = IS_MAC ? '' : process.env.DB_SOCKET
 
 const pool = new Pool({
-	host: process.env.DB_SOCKET,
+	host: SOCKET_PATH,
 	user: process.env.DB_USER,
 	database: process.env.DB_NAME,
 	max: 20,
 	idleTimeoutMillis: 30000,
-	connectionTimeoutMillis: 2000
+	connectionTimeoutMillis: 2000,
 })
 
 // the pool will emit an error on behalf of any idle clients
