@@ -10,7 +10,7 @@ const pool = new Pool({
 	database: process.env.DB_NAME,
 	max: 20,
 	idleTimeoutMillis: 30000,
-	connectionTimeoutMillis: 2000,
+	connectionTimeoutMillis: 2000
 })
 
 // the pool will emit an error on behalf of any idle clients
@@ -21,7 +21,7 @@ pool.on('error', (err, client) => {
 })
 
 // async/await - check out a client
-export async function query (sql_query, ...params) {
+export async function query_db (sql_query, ...params) {
 	const client = await pool.connect()
 	let res
 	try {

@@ -1,4 +1,4 @@
-const { insert_into, parse_table, textify } = require('./sql')
+const { insert_into, parse_table, textify } = require('./sql_lib')
 
 // CONSTANTS
 const CONTINENTS = 'continents'

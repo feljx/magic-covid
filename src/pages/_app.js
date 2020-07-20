@@ -1,11 +1,5 @@
-import '../_app.css'
-import { StateProvider } from '../state'
+import '../components/App/App.css'
+import App from '../components/App'
 
 // This default export is required in a new `pages/_app.js` file.
-export default function MyApp ({ Component, pageProps }) {
-	return (
-		<StateProvider>
-			<Component {...pageProps} />
-		</StateProvider>
-	)
-}
+export default App

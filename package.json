@@ -5,9 +5,9 @@
 		"dev": "next",
 		"build": "next build",
 		"start": "NODE_ENV=production && pm2 start npx --name 'next server' -- next -- start",
-		"parse": "node src/db/parse.js",
-		"feed": "node src/db/feed.js",
-		"clear": "node src/db/clear.js",
+		"parse": "node src/data/parse.js",
+		"feed": "node src/data/feed.js",
+		"clear": "node src/data/clear.js",
 		"types": "tcm src"
 	},
 	"dependencies": {

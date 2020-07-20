@@ -2,7 +2,7 @@ import { createContext, useContext, useReducer, useState } from 'react'
 
 const _global_state = {
 	cache: {},
-	foo: 'bar',
+	foo: 'bar'
 }
 
 function global_reducer (state, action) {
@@ -24,6 +24,15 @@ export function use_global_state () {
 		throw new Error('useStore must be used within StoreProvider')
 	}
 	return [ store, dispatch ]
+}
+
+export function update_cache (partial_state) {
+	const store = useContext(StoreContext)
+	const dispatch = useContext(DispatchContext)
+	if (store === undefined || dispatch === undefined) {
+		throw new Error('useStore must be used within StoreProvider')
+	}
+	dispatch({ type: 'cache_update', payload: partial_state })
 }
 
 export const use_state = useState
