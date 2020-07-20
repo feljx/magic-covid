@@ -7,10 +7,8 @@ function Home () {
 	const update_input_val = function (ev) {
 		set_input_val(ev.target.value)
 	}
-	// const global_state = use_global_state()[0]
-	// useEffect(function () {
-	// 	console.log(global_state.countries)
-	// })
+	const [ s ] = use_global_state()
+	console.log(s.cache.countries)
 	return (
 		<input
 			type="text"

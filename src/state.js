@@ -5,10 +5,16 @@ const _global_state = {
 	foo: 'bar'
 }
 
+const CACHE_UPDATE = 'update_cache'
+export function CacheUpdate (partial_state) {
+	this.type = CACHE_UPDATE
+	this.payload = partial_state
+}
+
 function global_reducer (state, action) {
-	switch (action) {
-		case 'cache_update':
-			return { ...state, cache: action.payload }
+	switch (action.type) {
+		case CACHE_UPDATE:
+			return { ...state, cache: { ...state.cache, ...action.payload } }
 		default:
 			return state
 	}
@@ -24,15 +30,6 @@ export function use_global_state () {
 		throw new Error('useStore must be used within StoreProvider')
 	}
 	return [ store, dispatch ]
-}
-
-export function update_cache (partial_state) {
-	const store = useContext(StoreContext)
-	const dispatch = useContext(DispatchContext)
-	if (store === undefined || dispatch === undefined) {
-		throw new Error('useStore must be used within StoreProvider')
-	}
-	dispatch({ type: 'cache_update', payload: partial_state })
 }
 
 export const use_state = useState
