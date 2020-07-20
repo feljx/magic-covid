@@ -8,14 +8,27 @@ function Home () {
 		set_input_val(ev.target.value)
 	}
 	const [ s ] = use_global_state()
-	console.log(s.cache.countries)
-	return (
-		<input
-			type="text"
-			value={input_val}
-			onChange={update_input_val}
-			className={styles.search}
-		/>
+	const cache_loaded = !!s.cache.countries
+	return cache_loaded ? (
+		<React.Fragment>
+			<input
+				type="text"
+				value={input_val}
+				onChange={update_input_val}
+				className={styles.search}
+			/>
+			<ul>
+				{s.cache.countries
+					.filter((country) =>
+						[ ...input_val.toLowerCase() ].every((c) =>
+							country.toLowerCase().includes(c)
+						)
+					)
+					.map((country) => <li key={country}>{country}</li>)}
+			</ul>
+		</React.Fragment>
+	) : (
+		'Loading...'
 	)
 }
 

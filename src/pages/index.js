@@ -26,13 +26,8 @@ export default Index
 
 export const getServerSideProps = async () => {
 	try {
-		// const continents = await query_db(ALL_CONTINENTS)
-		// const countries = await query_db(ALL_COUNTRIES)
 		return {
-			props: {
-				// continents,
-				// countries
-			}
+			props: {}
 		}
 	} catch (error) {
 		console.error(error)
