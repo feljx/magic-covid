@@ -16,7 +16,7 @@ export default function Search (props) {
 				type="text"
 				value={input_val}
 				onChange={update_input_val}
-				placeholder="Enter country or territory"
+				placeholder="Filter for country or territory"
 			/>
 			<ul className={styles.list}>
 				{s.cache.countries
