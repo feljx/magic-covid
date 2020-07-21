@@ -17,7 +17,7 @@ parse_table(
 	// maps raw json input to array of column values to insert (in correct order)
 	function (raw) {
 		return [
-			...new Set(raw.records.map((r) => r.continentExp))
+			...new Set(raw.records.map((r) => r.continentExp)),
 		].map((continent) => [ textify(continent), 'NULL' ])
 	}
 )
@@ -29,12 +29,12 @@ parse_table(
 	// columns
 	{
 		name: 'text',
-		code: 'varchar(6) NULL',
+		geo_code: 'varchar(9)',
 		pop: 'bigint DEFAULT NULL',
-		continent: 'text REFERENCES continents'
+		continent: 'text REFERENCES continents',
 	},
 	// primary key
-	'name',
+	'geo_code',
 	// reducer
 	// maps raw json input to array of column values to insert (in correct order)
 	function (raw) {
@@ -43,17 +43,19 @@ parse_table(
 				// stringify tuple to allow Set class to filter for unique values
 				JSON.stringify([
 					r.countriesAndTerritories,
-					r.countryterritoryCode,
+					r.geoId,
 					r.popData2018,
-					r.continentExp
+					r.continentExp,
 				])
 			)
 		)
 		// convert set back to array by spreading contents into array literal
 		return [ ...set_of_uniques ].map((stringified_tuple) => {
 			// parse stringified tuple to get values
-			const [ name, code, pop, continent ] = JSON.parse(stringified_tuple)
-			return [ textify(name), textify(code), pop, textify(continent) ]
+			const [ name, geo_code, pop, continent ] = JSON.parse(
+				stringified_tuple
+			)
+			return [ textify(name), textify(geo_code), pop, textify(continent) ]
 		})
 	}
 )
@@ -64,21 +66,21 @@ parse_table(
 	DATA_POINTS,
 	// columns
 	{
-		country: `text REFERENCES ${COUNTRIES}`,
+		geo_code: `text REFERENCES ${COUNTRIES}`,
 		time: 'date',
-		cases: 'bigint NULL',
-		deaths: 'bigint NULL'
+		cases: 'integer',
+		deaths: 'integer',
 	},
 	// primary key
-	'country, time',
+	'geo_code, time',
 	// reducer
 	// maps raw json input to array of column values to insert (in correct order)
 	function (raw) {
 		return raw.records.map((r) => [
-			textify(r.countriesAndTerritories),
+			textify(r.geoId),
 			textify(`${r.year}-${r.month}-${r.day}`),
 			r.cases,
-			r.deaths
+			r.deaths,
 		])
 	}
 )

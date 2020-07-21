@@ -15,6 +15,7 @@
 	color: rgb(190, 190, 190);
 	/* border: 3px solid rgb(128, 128, 128); */
 	padding: 0.4rem;
+	/* font-family: Arial, sans-serif; */
 }
 
 .field::placeholder {
@@ -22,6 +23,7 @@
 }
 
 .list {
+	font-family: Arial, sans-serif;
 	display: flex;
 	flex-wrap: wrap;
 	text-align: center;

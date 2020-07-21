@@ -1,5 +1,5 @@
 const fs = require('fs')
-const covid_data = require('./raw/covid19.json')
+const covid_data = require('./raw/covid19_full.json')
 
 function create_table (name, cols, primary_key) {
 	const col_string = Object.entries(cols)
