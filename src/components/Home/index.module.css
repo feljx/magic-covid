@@ -5,6 +5,7 @@
 
 .title {
 	font-size: 6rem;
+	margin-bottom: 2.4rem;
 }
 
 .title > *:first-child {
