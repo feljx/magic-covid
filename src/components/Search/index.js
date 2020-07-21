@@ -16,13 +16,12 @@ export default function Search (props) {
 				type="text"
 				value={input_val}
 				onChange={update_input_val}
+				placeholder="Enter country or territory"
 			/>
 			<ul className={styles.list}>
 				{s.cache.countries
 					.filter((country) =>
-						[ ...input_val.toLowerCase() ].every((c) =>
-							country.toLowerCase().includes(c)
-						)
+						country.toLowerCase().includes(input_val.toLowerCase())
 					)
 					.map((country) => (
 						<Link href={`/${country}`} key={country}>
