@@ -5,12 +5,6 @@ const _global_state = {
 	foo: 'bar'
 }
 
-const CACHE_UPDATE = 'update_cache'
-export function CacheUpdate (partial_state) {
-	this.type = CACHE_UPDATE
-	this.payload = partial_state
-}
-
 function global_reducer (state, action) {
 	switch (action.type) {
 		case CACHE_UPDATE:
@@ -20,9 +14,21 @@ function global_reducer (state, action) {
 	}
 }
 
+// ACTION CONSTRUCTOR
+const CACHE_UPDATE = 'update_cache'
+export function CacheUpdate (partial_state) {
+	this.type = CACHE_UPDATE
+	this.payload = partial_state
+}
+
+// MANUAL STATE REDUCER (NO HOOKS)
+export function update_cache (partial_state) {}
+
+// CONTEXT SETUP
 const StoreContext = createContext(undefined)
 const DispatchContext = createContext(undefined)
 
+// USE GLOBAL STATE HOOK
 export function use_global_state () {
 	const store = useContext(StoreContext)
 	const dispatch = useContext(DispatchContext)
@@ -32,10 +38,14 @@ export function use_global_state () {
 	return [ store, dispatch ]
 }
 
+// RENAME useState for consistency
 export const use_state = useState
 
+// STATE PROVIDER
+let _dispatch
 export function StateProvider (props) {
 	const [ store, dispatch ] = useReducer(global_reducer, _global_state)
+	_dispatch = dispatch
 	return (
 		<StoreContext.Provider value={store}>
 			<DispatchContext.Provider value={dispatch}>

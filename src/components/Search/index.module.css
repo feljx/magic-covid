@@ -1,0 +1,36 @@
+.search {
+	font-size: 1.7rem;
+	display: flex;
+	flex-direction: column;
+}
+
+.field {
+	font-size: 2.4rem;
+	height: 3rem;
+	margin-bottom: 1.5rem;
+
+	background-color: rgba(0, 0, 0, 0);
+	border: none;
+	outline: none;
+	color: rgb(190, 190, 190);
+	border-bottom: 2px solid rgb(190, 190, 190);
+	padding-bottom: 0.4rem;
+}
+
+.list {
+	display: flex;
+	flex-wrap: wrap;
+	text-align: center;
+}
+
+.list_item {
+	margin: 0.4rem 0.4rem;
+	padding: 0.6rem;
+	cursor: pointer;
+	line-height: 1;
+	background-color: rgb(26, 32, 56);
+}
+
+.list_item:hover {
+	background-color: rgb(37, 43, 68);
+}

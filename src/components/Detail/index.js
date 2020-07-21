@@ -1,4 +1,4 @@
-import styles from './Detail.module.css'
+import styles from './index.module.css'
 import { use_state } from '../../state'
 
 function Home (props) {

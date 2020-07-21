@@ -11,6 +11,7 @@
 		"types": "tcm src"
 	},
 	"dependencies": {
+		"minireset.css": "0.0.6",
 		"next": "^9.4.4",
 		"pg": "^8.3.0",
 		"react": "^16.13.1",
