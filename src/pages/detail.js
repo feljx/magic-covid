@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 function Detail (props) {
 	return (
 		<div>
-			<p>{foo}</p>
+			<p>foo</p>
 		</div>
 	)
 }
