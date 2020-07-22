@@ -1,15 +1,12 @@
 import styles from './index.module.css'
-import { use_state, use_global_state } from '../../state'
 import Search from '../Search'
+import Title from '../Title'
 
 function Home () {
 	return (
 		<div className={styles.container}>
-			<h1 className={styles.title}>
-				<span>covid</span>
-				<span>report</span>
-			</h1>
-			<Search className={styles.content} />
+			<Title />
+			<Search />
 		</div>
 	)
 }

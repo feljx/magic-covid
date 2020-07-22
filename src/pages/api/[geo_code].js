@@ -1,13 +1,12 @@
-import { ALL_COUNTRIES } from '../../data/api_query'
+import { ALL_CONTINENTS, DATAPOINTS } from '../../data/api_query'
 import { query_db } from '../../data/db_query'
 
 export default async function detailHandler (req, res) {
-	// const { query: { id, name }, method } = req
+	const { query: { geo_code } } = req
 
 	try {
-		const rows = await query_db(ALL_COUNTRIES)
 		return res.status(200).json({
-			countries: rows,
+			[geo_code]: await query_db(DATAPOINTS(geo_code)),
 		})
 	} catch (error) {
 		console.error(error)

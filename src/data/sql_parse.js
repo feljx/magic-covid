@@ -44,7 +44,7 @@ parse_table(
 				JSON.stringify([
 					r.countriesAndTerritories,
 					r.geoId,
-					r.popData2018,
+					r.popData2019,
 					r.continentExp,
 				])
 			)
@@ -67,7 +67,7 @@ parse_table(
 	// columns
 	{
 		geo_code: `text REFERENCES ${COUNTRIES}`,
-		time: 'date',
+		time: 'varchar(10)',
 		cases: 'integer',
 		deaths: 'integer',
 	},

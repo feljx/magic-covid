@@ -21,16 +21,18 @@ export default function Search (props) {
 			<ul className={styles.list}>
 				{s.cache.countries
 					.filter((country) =>
-						country.toLowerCase().includes(input_val.toLowerCase())
+						country.name
+							.toLowerCase()
+							.includes(input_val.toLowerCase())
 					)
 					.map((country) => (
-						<Link href={`/${country}`} key={country}>
-							<li className={styles.list_item}>{country}</li>
+						<Link href={`/${country.geo_code}`} key={country.name}>
+							<li className={styles.list_item}>{country.name}</li>
 						</Link>
 					))}
 			</ul>
 		</div>
 	) : (
-		'Loading...'
+		<div className={`${props.className} ${styles.search}`}>Loading...</div>
 	)
 }

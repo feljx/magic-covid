@@ -1,3 +1,4 @@
-.search {
-	font-size: 2rem;
+.container {
+	grid-area: content;
+	width: 100%;
 }

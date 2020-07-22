@@ -13,7 +13,24 @@ CREATE TABLE ${name} (
 }
 
 function insert_into (table, ...vals) {
-	const val_string = vals.map((v) => v || 'NULL').join(', ')
+	const val_string = vals
+		.map((v) => {
+			// if value is falsy
+			if (!v) {
+				// but value is a number (so probably 0)
+				if (typeof v === 'number') {
+					// return the value after all
+					return v
+				} else {
+					// return 'NULL' if value falsy and not a number
+					return 'NULL'
+				}
+			} else {
+				// if value is truthy return value
+				return v
+			}
+		})
+		.join(', ')
 	return `INSERT INTO ${table} VALUES (${val_string});`
 }
 
