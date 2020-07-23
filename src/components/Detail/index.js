@@ -27,12 +27,9 @@ function Detail ({ data }) {
 			const median = Math.floor(t.length / 2)
 			const [ yyyy, mm, dd ] = t[median].time.split('-')
 			const label = `${MONTHS[mm - 1]} ${dd}`
-			const cases = Math.round(
-				t.reduce((acc, data) => acc + data.cases, 0) / t.length
-			)
-			const deaths = Math.round(
-				t.reduce((acc, data) => acc + data.deaths, 0) / t.length
-			)
+			const sum = (key) => (acc, data) => acc + data[key]
+			const cases = Math.round(t.reduce(sum('cases'), 0) / t.length)
+			const deaths = Math.round(t.reduce(sum('deaths'), 0) / t.length)
 			data_labels.push(label)
 			data_cases.push(cases)
 			data_deaths.push(deaths)
@@ -46,13 +43,11 @@ function Detail ({ data }) {
 				datasets: [
 					{
 						label: 'Cases',
-						backgroundColor: 'rgb(237, 159, 197)',
-						borderColor: 'rgb(237, 159, 197)',
+						borderColor: 'rgb(142, 185, 222)',
 						data: data_cases,
 					},
 					{
 						label: 'Deaths',
-						backgroundColor: 'rgb(212, 58, 79)',
 						borderColor: 'rgb(212, 58, 79)',
 						data: data_deaths,
 					},

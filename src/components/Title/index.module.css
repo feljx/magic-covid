@@ -1,8 +1,14 @@
 .title {
 	font-size: 6rem;
 	margin-bottom: 2.4rem;
+	user-select: none;
+	cursor: pointer;
 }
 
 .title > *:first-child {
 	color: rgb(212, 58, 79);
+}
+
+.title:hover {
+	filter: brightness(1.2);
 }
