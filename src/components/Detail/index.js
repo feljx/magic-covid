@@ -4,38 +4,58 @@ import Chart from 'chart.js'
 import { useRef, useEffect } from 'react'
 import Title from '../Title'
 
+function tuples (size, list) {
+	const n = Math.floor(list.length / size)
+	const rest = list.slice(n * size)
+	const tuple_list = new Array(n).fill(null).map(function (_, idx) {
+		const idx_norm = idx * size
+		return new Array(size).fill(null).map((_, idx) => list[idx_norm + idx])
+	})
+	if (rest.length > 0) tuple_list.push(rest)
+	return tuple_list
+}
+
 function Detail ({ data }) {
 	const canvas_ref = useRef(null)
-	console.log(data)
 	useEffect(function () {
-		const labels = []
-		const cases = []
-		const deaths = []
-		for (const d of data) {
-			const [ yyyy, mm, dd ] = d.time.split('-')
-			labels.push(`${MONTHS[mm - 1]} ${dd}`)
-			cases.push(d.cases)
-			deaths.push(d.deaths)
+		const averaging_scope = 3
+		const data_labels = []
+		const data_cases = []
+		const data_deaths = []
+		const data_tuples = tuples(averaging_scope, data)
+		for (const t of data_tuples) {
+			console.log(t)
+			const median = Math.floor(t.length / 2)
+			const [ yyyy, mm, dd ] = t[median].time.split('-')
+			const label = `${MONTHS[mm - 1]} ${dd}`
+			const cases = Math.round(
+				t.reduce((acc, data) => acc + data.cases, 0) / t.length
+			)
+			const deaths = Math.round(
+				t.reduce((acc, data) => acc + data.deaths, 0) / t.length
+			)
+			data_labels.push(label)
+			data_cases.push(cases)
+			data_deaths.push(deaths)
 		}
-		const ctx = canvas_ref.current.getContext('2d')
 
+		const ctx = canvas_ref.current.getContext('2d')
 		const chart = new Chart(ctx, {
 			type: 'line',
 			data: {
-				labels,
+				labels: data_labels,
 				datasets: [
 					{
 						label: 'Cases',
 						backgroundColor: 'rgb(237, 159, 197)',
 						borderColor: 'rgb(237, 159, 197)',
-						data: cases,
-						fill: false,
+						data: data_cases,
 					},
 					{
 						label: 'Deaths',
 						backgroundColor: 'rgb(212, 58, 79)',
 						borderColor: 'rgb(212, 58, 79)',
-						data: deaths,
+						data: data_deaths,
 					},
 				],
 			},
@@ -43,7 +63,7 @@ function Detail ({ data }) {
 				legend: { display: true },
 			},
 		})
-	})
+	}, [])
 	return (
 		<div className={styles.container}>
 			<Title />

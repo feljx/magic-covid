@@ -6,7 +6,6 @@ export default Detail
 
 export async function getServerSideProps (context) {
 	const { geo_code } = context.params
-	// console.log(DATAPOINTS(geo_code))
 	const rows = await query_db(DATAPOINTS(geo_code))
 
 	return {
