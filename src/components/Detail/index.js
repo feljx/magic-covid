@@ -24,7 +24,6 @@ function Detail ({ data }) {
 		const data_deaths = []
 		const data_tuples = tuples(averaging_scope, data)
 		for (const t of data_tuples) {
-			console.log(t)
 			const median = Math.floor(t.length / 2)
 			const [ yyyy, mm, dd ] = t[median].time.split('-')
 			const label = `${MONTHS[mm - 1]} ${dd}`
