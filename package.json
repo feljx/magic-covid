@@ -5,6 +5,7 @@
         "dev": "next",
         "build": "next build",
         "start": "NODE_ENV=production && pm2 start npx --name 'next server' -- next -- start",
+        "restart": "pm2 stop all && npm run build && pm2 restart all",
         "parse": "node src/data/sql_parse.js",
         "feed": "node src/data/db_feed.js",
         "clear": "node src/data/db_clear.js",
