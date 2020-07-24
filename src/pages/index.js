@@ -6,29 +6,28 @@ import { query_api, ALL_CONTINENTS, ALL_COUNTRIES } from '../data/api_query'
 
 // function Index ({ continents, countries }) {
 function Index () {
-	const [ s, dispatch ] = use_global_state()
-	useEffect(function () {
-		// dispatch(new CacheUpdate({ continents, countries }))
-		async function fill_cache () {
-			const continents = await query_api('continents')
-			const countries = await query_api('countries')
-			dispatch(new CacheUpdate({ ...continents, ...countries }))
-		}
-		fill_cache()
-	}, [])
-	console.log(s.cache)
+    const [ s, dispatch ] = use_global_state()
+    useEffect(function () {
+        // dispatch(new CacheUpdate({ continents, countries }))
+        async function fill_cache () {
+            const continents = await query_api('continents')
+            const countries = await query_api('countries')
+            dispatch(new CacheUpdate({ ...continents, ...countries }))
+        }
+        fill_cache()
+    }, [])
 
-	return <Home />
+    return <Home />
 }
 
 export default Index
 
 export const getServerSideProps = async () => {
-	try {
-		return {
-			props: {},
-		}
-	} catch (error) {
-		console.error(error)
-	}
+    try {
+        return {
+            props: {},
+        }
+    } catch (error) {
+        console.error(error)
+    }
 }
