@@ -27,9 +27,9 @@ export default function Search (props) {
                     )
                     .map((country) => (
                         <Link
-                            href={`/[geo_code]`}
+                            href={'/[geo_code]'}
                             as={`/${country.geo_code}`}
-                            key={country.name}
+                            key={country.geo_code}
                         >
                             <li className={styles.list_item}>{country.name}</li>
                         </Link>
