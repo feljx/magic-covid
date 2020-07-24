@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS datapoints;
 CREATE TABLE datapoints (
 	geo_code text REFERENCES countries,
-	time varchar(10),
+	time date,
 	cases integer,
 	deaths integer,
 	PRIMARY KEY(geo_code, time)

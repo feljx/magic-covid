@@ -67,7 +67,7 @@ parse_table(
 	// columns
 	{
 		geo_code: `text REFERENCES ${COUNTRIES}`,
-		time: 'varchar(10)',
+		time: 'date',
 		cases: 'integer',
 		deaths: 'integer',
 	},

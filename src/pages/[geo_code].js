@@ -12,6 +12,7 @@ export async function getServerSideProps (context) {
 		props: {
 			data: rows
 				.filter((r) => r.cases >= 0)
+				.map((r) => ({...r, time: String(r.time)}))
 				.sort((r1, r2) => (r1.time < r2.time ? -1 : 1)),
 		},
 	}
