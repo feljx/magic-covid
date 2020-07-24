@@ -5,16 +5,19 @@ const URL = 'https://opendata.ecdc.europa.eu/covid19/casedistribution/json/'
 
 https
     .get(URL, (res) => {
-        let body = ''
+        let json_body = ''
 
         res.on('data', (chunk) => {
-            body += chunk
+            json_body += chunk
         })
 
         res.on('end', () => {
             try {
-                fs.writeFileSync(`${__dirname}/raw/covid19.json`, body, 'utf8')
-                // do something with JSON
+                fs.writeFileSync(
+                    `${__dirname}/raw/covid19.json`,
+                    json_body,
+                    'utf8'
+                )
             } catch (error) {
                 console.error(error.message)
             }
