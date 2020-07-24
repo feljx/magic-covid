@@ -14,7 +14,7 @@
     "dependencies": {
         "chart.js": "^2.9.3",
         "minireset.css": "0.0.6",
-        "next": "^9.4.4",
+        "next": "^9.4.5-canary.43",
         "pg": "^8.3.0",
         "react": "^16.13.1",
         "react-dom": "^16.13.1"
