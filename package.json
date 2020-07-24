@@ -1,24 +1,24 @@
 {
-	"name": "magic-covid",
-	"private": true,
-	"scripts": {
-		"dev": "next",
-		"build": "next build",
-		"start": "NODE_ENV=production && pm2 start npx --name 'next server' -- next -- start",
-		"parse": "node src/data/sql_parse.js",
-		"feed": "node src/data/db_feed.js",
-		"clear": "node src/data/db_clear.js",
-		"types": "tcm src"
-	},
-	"dependencies": {
-		"chart.js": "^2.9.3",
-		"minireset.css": "0.0.6",
-		"next": "^9.4.4",
-		"pg": "^8.3.0",
-		"react": "^16.13.1",
-		"react-dom": "^16.13.1"
-	},
-	"devDependencies": {
-		"typed-css-modules": "^0.6.4"
-	}
+    "name": "magic-covid",
+    "private": true,
+    "scripts": {
+        "dev": "next",
+        "build": "next build",
+        "start": "NODE_ENV=production && pm2 start npx --name 'next server' -- next -- start",
+        "parse": "node src/data/sql_parse.js",
+        "feed": "node src/data/db_feed.js",
+        "clear": "node src/data/db_clear.js",
+        "types": "tcm src"
+    },
+    "dependencies": {
+        "chart.js": "^2.9.3",
+        "minireset.css": "0.0.6",
+        "next": "^9.4.4",
+        "pg": "^8.3.0",
+        "react": "^16.13.1",
+        "react-dom": "^16.13.1"
+    },
+    "devDependencies": {
+        "typed-css-modules": "^0.6.4"
+    }
 }
