@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 export default function Title () {
     return (
-        <Link href="/index/" as="/">
+        <Link href="/">
             <h1 className={styles.title}>
                 <span>covid</span>
                 <span>report</span>
