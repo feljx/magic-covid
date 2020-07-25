@@ -6,9 +6,12 @@
         "build": "next build",
         "start": "NODE_ENV=production && pm2 start npx --name 'next server' -- next -- start",
         "restart": "pm2 stop all && npm run build && pm2 restart all",
+        "datarestart": "pm2 stop all && npm run loaddata && npm run build && pm2 restart all",
         "parse": "node src/data/sql_parse.js",
         "feed": "node src/data/db_feed.js",
         "clear": "node src/data/db_clear.js",
+        "getdata": "node src/data/json_get.js",
+        "loaddata": "npm run getdata && npm run parse && npm run clear && npm run feed",
         "types": "tcm src"
     },
     "dependencies": {
