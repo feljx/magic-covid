@@ -1,16 +1,15 @@
 import Link from 'next/link'
 import styles from './index.module.css'
-import { use_state, use_global_state } from '../../state'
+import { useState } from 'react'
 
-export default function Search (props) {
-    const [ input_val, set_input_val ] = use_state('')
+export default function Search ({ countries }) {
+    const [ input_val, set_input_val ] = useState('')
     const update_input_val = function (ev) {
         set_input_val(ev.target.value)
     }
-    const [ s ] = use_global_state()
-    const cache_loaded = !!s.cache.countries
-    return cache_loaded ? (
-        <div className={`${props.className} ${styles.search}`}>
+
+    return (
+        <div className={styles.search}>
             <input
                 className={styles.field}
                 type="text"
@@ -19,7 +18,7 @@ export default function Search (props) {
                 placeholder="Filter for country or territory"
             />
             <ul className={styles.list}>
-                {s.cache.countries
+                {countries
                     .filter((country) =>
                         country.name
                             .toLowerCase()
@@ -36,7 +35,7 @@ export default function Search (props) {
                     ))}
             </ul>
         </div>
-    ) : (
-        <div className={`${props.className} ${styles.search}`}>Loading...</div>
     )
 }
+
+// <div className={`${props.className} ${styles.search}`}>Loading...</div>

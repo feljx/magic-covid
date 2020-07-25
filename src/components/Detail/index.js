@@ -26,11 +26,7 @@ function Detail ({ data }) {
         for (const t of data_tuples) {
             const median = Math.floor(t.length / 2)
             const time = new Date(t[median].time)
-            const [ yyyy, mm, dd ] = [
-                time.getFullYear(),
-                time.getMonth(),
-                time.getDate(),
-            ]
+            const [ mm, dd ] = [ time.getMonth(), time.getDate() ]
             const label = `${MONTHS[mm]} ${dd}`
             const sum = (key) => (acc, data) => acc + data[key]
             const cases = Math.round(t.reduce(sum('cases'), 0) / t.length)

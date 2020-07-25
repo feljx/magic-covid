@@ -1,23 +1,9 @@
 import Home from '../components/Home'
-// import { query_db } from '../data/db_query'
-import { useEffect } from 'react'
-import { use_global_state, update_cache, CacheUpdate } from '../state'
-import { query_api, ALL_CONTINENTS, ALL_COUNTRIES } from '../data/api_query'
+import { ALL_CONTINENTS, ALL_COUNTRIES } from '../data/api_query'
+import { query_db } from '../data/db_query'
 
-// function Index ({ continents, countries }) {
-function Index () {
-    const [ s, dispatch ] = use_global_state()
-    useEffect(function () {
-        // dispatch(new CacheUpdate({ continents, countries }))
-        async function fill_cache () {
-            const continents = await query_api('continents')
-            const countries = await query_api('countries')
-            dispatch(new CacheUpdate({ ...continents, ...countries }))
-        }
-        fill_cache()
-    }, [])
-
-    return <Home />
+function Index ({ continents, countries }) {
+    return <Home continents={continents} countries={countries} />
 }
 
 export default Index
@@ -25,7 +11,10 @@ export default Index
 export const getServerSideProps = async () => {
     try {
         return {
-            props: {},
+            props: {
+                continents: await query_db(ALL_CONTINENTS),
+                countries: await query_db(ALL_COUNTRIES),
+            },
         }
     } catch (error) {
         console.error(error)
