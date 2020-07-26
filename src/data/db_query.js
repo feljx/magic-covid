@@ -7,6 +7,7 @@ const SOCKET_PATH = IS_MAC ? '' : process.env.DB_SOCKET
 const pool = new Pool({
 	host: SOCKET_PATH,
 	user: process.env.DB_USER,
+	password: process.env.DB_PW,
 	database: process.env.DB_NAME,
 	max: 20,
 	idleTimeoutMillis: 30000,

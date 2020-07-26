@@ -20,7 +20,9 @@
         "next": "^9.4.5-canary.43",
         "pg": "^8.3.0",
         "react": "^16.13.1",
-        "react-dom": "^16.13.1"
+        "react-dom": "^16.13.1",
+        "react-google-charts": "^3.0.15",
+        "swr": "^0.2.3"
     },
     "devDependencies": {
         "typed-css-modules": "^0.6.4"

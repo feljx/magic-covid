@@ -18,7 +18,7 @@ function tuples (size, list) {
 function Detail ({ data }) {
     const canvas_ref = useRef(null)
     useEffect(function () {
-        const averaging_scope = 3
+        const averaging_scope = 1
         const data_labels = []
         const data_cases = []
         const data_deaths = []
@@ -45,11 +45,11 @@ function Detail ({ data }) {
                     {
                         label: 'Cases',
                         borderColor: 'rgb(142, 185, 222)',
-                        data: data_cases,
+						data: data_cases,
                     },
                     {
                         label: 'Deaths',
-                        borderColor: 'rgb(212, 58, 79)',
+						borderColor: 'rgb(212, 58, 79)',
                         data: data_deaths,
                     },
                 ],
