@@ -7,8 +7,7 @@ export const WORLD = (date) =>
 
 export async function query_api (query_string) {
 	const api_promise = await fetch(
-		query_string
-		// `${window.location.origin}/api/${query_string}`
+		`${window.location.origin}/api/${query_string}`
 	)
 	return api_promise.json()
 }
