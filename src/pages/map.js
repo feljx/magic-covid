@@ -1,6 +1,3 @@
-import GeoChart from '../components/Map'
-import { WORLD } from '../data/api_query'
-import { query_db } from '../data/db_query'
+import GeoChart from '../components/Map';
 
-export default GeoChart
-
+export default GeoChart;

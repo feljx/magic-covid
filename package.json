@@ -16,6 +16,7 @@
     },
     "dependencies": {
         "chart.js": "^2.9.3",
+        "date-fns": "^2.15.0",
         "minireset.css": "0.0.6",
         "next": "^9.4.5-canary.43",
         "pg": "^8.3.0",
