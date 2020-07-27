@@ -1,4 +1,8 @@
 .container {
-	grid-area: content;
-	width: 100%;
+    grid-area: content;
+    width: 100%;
+}
+
+.slider {
+    width: 100%;
 }

@@ -52,6 +52,7 @@ function Map () {
                 Week from {start} to {end}
             </div>
             <input
+                className={styles.slider}
                 type="range"
                 min="0"
                 max={all_days.length - 1}
@@ -74,8 +75,8 @@ function Map () {
                     },
                 ]}
                 chartType="GeoChart"
-                width="100%"
-                height="400px"
+                // width="100%"
+                // height="400px"
                 data={preparedData}
                 options={{
                     backgroundColor: 'transparent',
