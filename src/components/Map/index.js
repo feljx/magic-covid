@@ -2,54 +2,63 @@ import styles from './index.module.css'
 import { useEffect, useState } from 'react'
 import { Chart as GChart } from 'react-google-charts'
 import { query_api } from '../../data/api_query'
-import { eachDayOfInterval } from 'date-fns'
+import { eachDayOfInterval, parseISO, sub, add, format } from 'date-fns'
 import { debounce, format_date, round_two_digits, tuples } from '../../shared'
 
-const all_days = tuples(
-    7,
-    eachDayOfInterval({
-        start: new Date(2019, 12, 31),
+const all_days = eachDayOfInterval(
+    {
+        start: parseISO('2019-12-31'),
         end: new Date(),
-    }).map(format_date)
-)
+    },
+    { step: 2 }
+).map(format_date)
 
 function Map () {
     const [ chart_data, set_chart_data ] = useState(null)
     const [ slider_index, set_slider_index ] = useState(all_days.length - 1)
-    const slider_week = all_days[slider_index]
-    const [ start, end ] = [
-        slider_week[0],
-        slider_week[slider_week.length - 1],
-    ]
+    const selected_date = all_days[slider_index]
 
-    const update_slider = (ev) => {
-        set_slider_index(ev.target.value)
-    }
+    const debounced_set_slider_index = debounce(
+        (new_index) => void set_slider_index(new_index)
+    )
+    const update_slider = (ev) =>
+        void debounced_set_slider_index(ev.target.value)
 
     const preparedData = !!chart_data && [
         [ 'Countries', 'Cases / 100k' ],
         ...chart_data.countries.map((row) => [
             row.geo_code,
-            !!row.pop
-                ? round_two_digits(
-                      row.cases / (Number(row.pop) / 100000) / row.daycount
-                  )
-                : null,
+            !row.pop || Number(row.cases) === 0
+                ? null
+                : round_two_digits(
+                      Number(row.cases) /
+                          (Number(row.pop) / 100000) /
+                          row.daycount
+                  ),
         ]),
     ]
 
     useEffect(
         () => {
-            const params = `worldmap?start=${start}&end=${end}`
+            const end = add(parseISO(selected_date), {
+                days: 1,
+            })
+
+            const start = sub(end, { days: 14 })
+            const params = `worldmap?start=${format_date(
+                start
+            )}&end=${format_date(end)}`
             query_api(params).then(set_chart_data)
         },
-        [ slider_week ]
+        [ selected_date ]
     )
+
+    const localized_date = format(parseISO(selected_date), 'PP')
 
     return !!chart_data ? (
         <div className={styles.container}>
             <div>
-                Week from {start} to {end}
+                14 day moving average on <br /> {localized_date}
             </div>
             <input
                 className={styles.slider}
@@ -79,11 +88,13 @@ function Map () {
                 // height="400px"
                 data={preparedData}
                 options={{
+                    legend: 'none',
                     backgroundColor: 'transparent',
+                    defaultColor: '#F5F5F5',
                     colorAxis: {
                         minValue: 0,
                         maxValue: 20,
-                        colors: [ 'green', 'yellow', 'red' ],
+                        colors: [ '#79bed9', '#ff0000' ],
                     },
                 }}
             />
