@@ -3,17 +3,7 @@ import { use_global_state } from '../../state'
 import Chart from 'chart.js'
 import { useRef, useEffect } from 'react'
 import Title from '../Title'
-
-function tuples (size, list) {
-    const n = Math.floor(list.length / size)
-    const rest = list.slice(n * size)
-    const tuple_list = new Array(n).fill(null).map(function (_, idx) {
-        const idx_norm = idx * size
-        return new Array(size).fill(null).map((_, idx) => list[idx_norm + idx])
-    })
-    if (rest.length > 0) tuple_list.push(rest)
-    return tuple_list
-}
+import { tuples } from '../../shared'
 
 function Detail ({ data }) {
     const canvas_ref = useRef(null)
@@ -45,11 +35,11 @@ function Detail ({ data }) {
                     {
                         label: 'Cases',
                         borderColor: 'rgb(142, 185, 222)',
-						data: data_cases,
+                        data: data_cases,
                     },
                     {
                         label: 'Deaths',
-						borderColor: 'rgb(212, 58, 79)',
+                        borderColor: 'rgb(212, 58, 79)',
                         data: data_deaths,
                     },
                 ],

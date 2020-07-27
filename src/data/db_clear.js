@@ -3,7 +3,7 @@ const child_process = require('child_process')
 
 // constants
 const DB_NAME = 'cf'
-const POSTGRES_CLEAR_CMD = `psql -d ${DB_NAME} -c`
+const POSTGRES_CLEAR_CMD = `PGPASSWORD=rovidceport psql -U covidreport -d ${DB_NAME} -c`
 const SQL_DROP_TABLES_CMD = (t) => `DROP TABLE IF EXISTS ${t};`
 
 // tables to drop (order matters because of foreign key references)

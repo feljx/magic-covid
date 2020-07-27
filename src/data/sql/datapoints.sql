@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS datapoints;
 CREATE TABLE datapoints (
-	geo_code text REFERENCES countries,
+	geo_code text REFERENCES countries ON UPDATE CASCADE,
 	time date,
 	cases integer,
 	deaths integer,
