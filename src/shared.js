@@ -1,37 +1,23 @@
-export function debounce (
-    func,
-    wait = 0,
-    { leading = false, trailing = true } = {}
-) {
-    const name = `debounce(${func.name})`
-    let timer
-    const debounced = {
-        [name]: (...args) => {
-            if (!wait) {
-                return func(...args)
-            }
-            const callNow = leading && !timer
-            cancel()
-            timer = setTimeout(() => {
-                timer = null
-                if (trailing) {
-                    return func(...args)
-                }
-            }, wait)
-            if (callNow) {
-                return func(...args)
-            }
-        },
-    }[name]
+export function debounce (fn) {
+    // Setup a timer
+    var timeout
 
-    /**
-	 * Cancels delayed `func` invocations.
-	 */
-    function cancel () {
-        clearTimeout(timer)
+    // Return a function to run debounced
+    return function () {
+        // Setup the arguments
+        var context = this
+        var args = arguments
+
+        // If there's a timer, cancel it
+        if (timeout) {
+            window.cancelAnimationFrame(timeout)
+        }
+
+        // Setup the new requestAnimationFrame()
+        timeout = window.requestAnimationFrame(function () {
+            fn.apply(context, args)
+        })
     }
-
-    return [ debounced, cancel ]
 }
 
 export function tuples (size, list) {
