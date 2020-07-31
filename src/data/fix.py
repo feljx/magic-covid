@@ -9,6 +9,7 @@ PROJECT = "covid19_project.json"
 OUTPUT = "covid19_repaired.json"
 LOG = "log.json"
 LATEST_DATE = datetime(2020,6,14)
+
 """
 PROBLEMS WITH PROJECT FILE:
 
