@@ -1,106 +1,37 @@
 import styles from './index.module.css'
 import { useEffect, useState } from 'react'
-import { Chart as GChart } from 'react-google-charts'
 import { query_api } from '../../data/api_query'
 import { eachDayOfInterval, parseISO, sub, add, format } from 'date-fns'
 import { debounce, format_date, round_two_digits, tuples } from '../../shared'
+import Svg from './Svg'
 
-const all_days = eachDayOfInterval(
-    {
-        start: parseISO('2019-12-31'),
-        end: new Date(),
-    },
-    { step: 2 }
-).map(format_date)
+const VIEWBOX_BASE = [ 30.767, 241.591, 784.077, 458.627 ]
+const VIEWBOX_ZOOM = [
+    30.767 + 196.01925,
+    241.591 + 114.65675 - 70,
+    392.0385,
+    229.3135,
+]
 
 function Map () {
-    const [ chart_data, set_chart_data ] = useState(null)
-    const [ slider_index, set_slider_index ] = useState(all_days.length - 1)
-    const selected_date = all_days[slider_index]
+    const print_code = (ev) => {
+        const region = ev.target.closest('[id]')
+        region.style.fill = 'red'
+        const id = region.getAttribute('id')
+        console.log(id)
 
-    const debounced_set_slider_index = debounce(
-        (new_index) => void set_slider_index(new_index)
-    )
-    const update_slider = (ev) =>
-        void debounced_set_slider_index(ev.target.value)
-
-    const preparedData = !!chart_data && [
-        [ 'Countries', 'Cases / 100k' ],
-        ...chart_data.countries.map((row) => [
-            row.geo_code,
-            !row.pop || Number(row.cases) === 0
-                ? null
-                : round_two_digits(
-                      Number(row.cases) /
-                          (Number(row.pop) / 100000) /
-                          row.daycount
-                  ),
-        ]),
-    ]
-
-    useEffect(
-        () => {
-            const end = add(parseISO(selected_date), {
-                days: 1,
-            })
-
-            const start = sub(end, { days: 14 })
-            const params = `worldmap?start=${format_date(
-                start
-            )}&end=${format_date(end)}`
-            query_api(params).then(set_chart_data)
-        },
-        [ selected_date ]
-    )
-
-    const localized_date = format(parseISO(selected_date), 'PP')
-
-    return !!chart_data ? (
+        console.log('Client:', ev.clientX, ev.clientY)
+    }
+    return (
         <div className={styles.container}>
-            <div>
-                14 day moving average on <br /> {localized_date}
+            <div className={styles.map_container}>
+                <Svg
+                    // viewBox={VIEWBOX.join(' ')}
+                    className={styles.map}
+                    onClick={print_code}
+                />
             </div>
-            <input
-                className={styles.slider}
-                type="range"
-                min="0"
-                max={all_days.length - 1}
-                step="1"
-                value={slider_index}
-                onChange={update_slider}
-            />
-            <GChart
-                mapsApiKey={'AIzaSyAAYhsRZFxLK7EwtE2isGGNk12bvm_2KBM'}
-                chartEvents={[
-                    {
-                        eventName: 'select',
-                        callback: ({ chartWrapper }) => {
-                            const chart = chartWrapper.getChart()
-                            const selection = chart_data.getSelection()
-                            if (selection.length === 0) return
-                            const region = chart_data[selection[0].row + 1]
-                            console.log('Selected : ' + region)
-                        },
-                    },
-                ]}
-                chartType="GeoChart"
-                // width="100%"
-                // height="400px"
-                data={preparedData}
-                options={{
-                    legend: 'none',
-                    backgroundColor: 'transparent',
-                    defaultColor: '#F5F5F5',
-                    colorAxis: {
-                        minValue: 0,
-                        maxValue: 20,
-                        colors: [ '#79bed9', '#ff0000' ],
-                    },
-                }}
-            />
         </div>
-    ) : (
-        <div>Loading</div>
     )
 }
 

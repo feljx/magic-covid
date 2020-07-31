@@ -1,6 +1,28 @@
 .container {
-    grid-area: content;
+    fill: rgb(190, 190, 190);
     width: 100%;
+    height: 100%;
+
+    display: grid;
+    grid-template-areas: ". . ." ". map ." ". . .";
+    grid-template-columns: 1rem calc(100% - 2rem) 1rem;
+    grid-template-rows: 1rem calc(100% - 2rem) 1rem;
+}
+
+.map_container {
+    grid-area: map;
+    height: 100%;
+    width: 100%;
+    background-color: teal;
+}
+
+.map {
+    /* width: calc(100vw - 2rem);
+    height: calc(100vh - 2rem); */
+    height: 100%;
+    width: 100%;
+    display: block;
+    box-sizing: border-box;
 }
 
 .slider {

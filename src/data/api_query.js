@@ -8,9 +8,10 @@ export const DATAPOINTS = (geo_code) =>
 export const WORLD_MAP_DATA = (start, end) => `
 SELECT
     d.geo_code,
+    c.name,
+    c.pop,
     SUM(d.cases) AS cases,
     SUM(d.deaths) AS deaths,
-    c.pop,
     COUNT(1) AS daycount
 FROM
     datapoints d, countries c
@@ -19,7 +20,7 @@ WHERE
 AND
     time BETWEEN '${start}' AND '${end}'
 GROUP BY
-    d.geo_code, c.pop;`
+    d.geo_code, c.name, c.pop;`
 
 export async function query_api (query_string) {
     const api_promise = await fetch(
