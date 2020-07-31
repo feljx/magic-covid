@@ -1,80 +1,38 @@
 import styles from './index.module.css'
-import { use_global_state } from '../../state'
-import { useRef, useEffect, useState } from 'react'
-import Title from '../Title'
-import { Chart as GChart } from 'react-google-charts'
-import Chart from 'chart.js'
+import { useEffect, useState } from 'react'
 import { query_api } from '../../data/api_query'
-import { eachDayOfInterval } from 'date-fns'
+import { eachDayOfInterval, parseISO, sub, add, format } from 'date-fns'
+import { debounce, format_date, round_two_digits, tuples } from '../../shared'
+import Svg from './Svg'
 
-function convertDate(date) {
-  return `${date.getFullYear()}-${(date.getMonth() + 1)
-    .toString()
-    .padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`
-}
+const VIEWBOX_BASE = [ 30.767, 241.591, 784.077, 458.627 ]
+const VIEWBOX_ZOOM = [
+    30.767 + 196.01925,
+    241.591 + 114.65675 - 70,
+    392.0385,
+    229.3135,
+]
 
-function Map() {
-  const [chartData, setChartData] = useState(null)
-  const today = new Date()
-  const allDays = eachDayOfInterval({ start: new Date(2019, 12, 31), end: today }).map(convertDate)
-  const [sliderIndex, setSliderIndex] = useState(allDays.length - 1)
-  const [sliderDate, setSliderDate] = useState(allDays[sliderIndex])
+function Map () {
+    const print_code = (ev) => {
+        const region = ev.target.closest('[id]')
+        region.style.fill = 'red'
+        const id = region.getAttribute('id')
+        console.log(id)
 
-  console.log(chartData)
-
-  useEffect(
-    () => {
-      async function queryData() {
-        setChartData(await query_api(`worldmap?date=${sliderDate}`))
-      }
-      queryData()
-    },
-    [sliderDate]
-  )
-
-  const updateSlider = (ev) => {
-    setSliderIndex(ev.target.value)
-    setSliderDate(allDays[sliderIndex])
-  }
-
-  const preparedData = !!chartData && [
-    ['Countries', 'Cases'],
-    ...chartData.countries.map((row) => [row.geo_code, row.cases / row.pop])
-  ]
-
-  console.log(sliderDate)
-
-  return !!chartData ? (
-    <div className={styles.container}>
-      <div>{sliderDate}</div>
-      <input type="range" min="0" max={allDays.length - 1} step="1" value={sliderIndex} onChange={updateSlider} />
-      <GChart
-        chartEvents={[
-          {
-            eventName: 'select',
-            callback: ({ chartWrapper }) => {
-              const chart = chartWrapper.getChart()
-              const selection = chartData.getSelection()
-              if (selection.length === 0) return
-              const region = chartData[selection[0].row + 1]
-              console.log('Selected : ' + region)
-            }
-          }
-        ]}
-        chartType="GeoChart"
-        width="100%"
-        height="400px"
-        data={preparedData}
-        options={{
-          colorAxis: {
-            colors: ['green', 'yellow', 'red']
-          }
-        }}
-      />
-    </div>
-  ) : (
-    <div>Loading</div>
-  )
+        console.log('Client:', ev.clientX, ev.clientY)
+    }
+    return (
+        <div className={styles.container}>
+            <div className={styles.map_container}>
+                <Svg
+                    // viewBox={VIEWBOX.join(' ')}
+                    className={styles.map}
+                    onClick={print_code}
+                />
+            </div>
+        </div>
+    )
 }
 
 export default Map
