@@ -11,7 +11,6 @@ function SvgWorld3 ({ onClick, ...props }) {
             id="world-map"
             {...props}
         >
-            <title>{'Simple World Map'}</title>
             <desc>
                 {
                     '\r\n    Author: Al MacDonald\r\n    Editor: Fritz Lekschas\r\n    License: CC BY-SA 3.0\r\n    ID: ISO 3166-1 or "_[a-zA-Z]" if an ISO code is not available\r\n'
