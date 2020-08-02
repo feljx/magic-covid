@@ -2,7 +2,13 @@ import styles from './index.module.css'
 import { useEffect, useState } from 'react'
 import { query_api } from '../../data/api_query'
 import { eachDayOfInterval, parseISO, sub, add, format } from 'date-fns'
-import { debounce, format_date, round_two_digits, tuples } from '../../shared'
+import {
+    debounce,
+    format_date,
+    round_two_digits,
+    tuples,
+    debounce_ev
+} from '../../shared'
 import Svg from './Svg'
 
 // Constants
@@ -20,30 +26,95 @@ const TOOLTIP_VISIBLE = (ev) => ({
     left: `${ev.clientX + 15}px`
 })
 
-function Map () {
-    // State
-    const [ tooltip_content, set_tooltip_content ] = useState('')
-    const [ tooltip_styles, set_tooltip_styles ] = useState({})
+const all_days = eachDayOfInterval(
+    {
+        start: parseISO('2019-12-31'),
+        end: new Date()
+    },
+    { step: 2 }
+).map(format_date)
 
+const last_day = all_days[all_days.length - 1]
+const today = format_date(new Date())
+if (last_day !== today) {
+    all_days.push(today)
+}
+
+function Map () {
+    //
+    // State
+    //
+    const [ tooltip_content, set_tooltip_content ] = useState('')
+    const [ tooltip_styles, set_tooltip_style ] = useState({})
+    const [ slider_index, set_slider_index ] = useState(all_days.length - 1)
+    const selected_date = all_days[slider_index]
+    const [ chart_data, set_chart_data ] = useState(null)
+
+    // Debounced helper function
+    const _update_slider = debounce(set_slider_index)
+    const update_slider = (ev) => void _update_slider(ev.target.value)
+    const preparedData = !!chart_data && [
+        [ 'Countries', 'Cases / 100k' ],
+        ...chart_data.countries.map((row) => [
+            { v: row.geo_code, f: row.name },
+            !row.pop || Number(row.cases) === 0
+                ? null
+                : round_two_digits(
+                      Number(row.cases) /
+                          (Number(row.pop) / 100000) /
+                          row.daycount
+                  )
+        ])
+    ]
+
+    useEffect(
+        () => {
+            const end = add(parseISO(selected_date), {
+                days: 1
+            })
+            const start = sub(end, { days: 14 })
+            const params = `worldmap?start=${format_date(
+                start
+            )}&end=${format_date(end)}`
+            query_api(params).then(set_chart_data)
+        },
+        [ selected_date ]
+    )
+
+    const localized_date = format(parseISO(selected_date), 'PP')
+
+    //
     // Event handlers
+    //
+    // Color regions red on click
     const print_code = (ev) => {
         const region = ev.target.closest('[id]')
         region.style.fill = 'red'
         const id = region.getAttribute('id')
-        // console.log('Client:', ev.clientX, ev.clientY)
     }
-    const debounced_set_tooltip_content = debounce(set_tooltip_content)
-    const debounced_set_tooltip_styles = debounce(set_tooltip_styles)
-    const show_toolip = (ev) => {
+    // Debounced helper function
+    const _change_tooltip = debounce((id, client_x, client_y) => {
+        const on_country = id !== 'world-map'
+        if (on_country) set_tooltip_content(id)
+        const style = on_country
+            ? {
+                  display: 'block',
+                  top: `${client_y + 15}px`,
+                  left: `${client_x + 15}px`
+              }
+            : { display: 'none' }
+        set_tooltip_style(style)
+    })
+    // Show and update tooltip when hovering over region, hide
+    const change_tooltip = (ev) => {
         const region = ev.target.closest('[id]')
         const id = region.getAttribute('id')
-        const on_country = id !== 'world-map'
-        if (on_country) debounced_set_tooltip_content(id)
-        const styles = on_country ? TOOLTIP_VISIBLE(ev) : TOOLTIP_HIDDEN
-        debounced_set_tooltip_styles(styles)
+        _change_tooltip(id, ev.clientX, ev.clientY)
     }
 
+    //
     // Render
+    //
     return (
         <div className={styles.container}>
             <div className={styles.map_container}>
@@ -51,7 +122,7 @@ function Map () {
                     // viewBox={VIEWBOX.join(' ')}
                     className={styles.map}
                     onClick={print_code}
-                    onMouseMove={show_toolip}
+                    onMouseMove={change_tooltip}
                 />
             </div>
             <div className={styles.tooltip} style={tooltip_styles}>
