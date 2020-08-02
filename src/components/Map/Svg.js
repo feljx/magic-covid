@@ -1,8 +1,9 @@
 import * as React from 'react'
 
-function SvgWorld3 ({ onClick, ...props }) {
+const SvgWorld3 = React.forwardRef(({ onClick, ...props }, ref) => {
     return (
         <svg
+            ref={ref}
             x="0px"
             y="0px"
             width="784.077px"
@@ -900,6 +901,6 @@ function SvgWorld3 ({ onClick, ...props }) {
             </g>
         </svg>
     )
-}
+})
 
 export default SvgWorld3

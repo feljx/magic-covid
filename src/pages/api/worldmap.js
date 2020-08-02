@@ -7,7 +7,7 @@ export default async function detailHandler (req, res) {
     try {
         const rows = await query_db(WORLD_MAP_DATA(start, end))
         return res.status(200).json({
-            countries: rows,
+            data: rows,
         })
     } catch (error) {
         console.error(error)

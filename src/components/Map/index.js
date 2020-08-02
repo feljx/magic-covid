@@ -1,5 +1,5 @@
 import styles from './index.module.css'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, createRef } from 'react'
 import { query_api } from '../../data/api_query'
 import { eachDayOfInterval, parseISO, sub, add, format } from 'date-fns'
 import {
@@ -7,7 +7,7 @@ import {
     format_date,
     round_two_digits,
     tuples,
-    debounce_ev
+    debounce_ev,
 } from '../../shared'
 import Svg from './Svg'
 
@@ -17,19 +17,19 @@ const VIEWBOX_ZOOM = [
     30.767 + 196.01925,
     241.591 + 114.65675 - 70,
     392.0385,
-    229.3135
+    229.3135,
 ]
 const TOOLTIP_HIDDEN = { display: 'none' }
 const TOOLTIP_VISIBLE = (ev) => ({
     display: 'block',
     top: `${ev.clientY + 15}px`,
-    left: `${ev.clientX + 15}px`
+    left: `${ev.clientX + 15}px`,
 })
 
 const all_days = eachDayOfInterval(
     {
         start: parseISO('2019-12-31'),
-        end: new Date()
+        end: new Date(),
     },
     { step: 2 }
 ).map(format_date)
@@ -41,6 +41,8 @@ if (last_day !== today) {
 }
 
 function Map () {
+    const svg_ref = createRef()
+
     //
     // State
     //
@@ -48,35 +50,38 @@ function Map () {
     const [ tooltip_styles, set_tooltip_style ] = useState({})
     const [ slider_index, set_slider_index ] = useState(all_days.length - 1)
     const selected_date = all_days[slider_index]
-    const [ chart_data, set_chart_data ] = useState(null)
 
     // Debounced helper function
     const _update_slider = debounce(set_slider_index)
-    const update_slider = (ev) => void _update_slider(ev.target.value)
-    const preparedData = !!chart_data && [
-        [ 'Countries', 'Cases / 100k' ],
-        ...chart_data.countries.map((row) => [
-            { v: row.geo_code, f: row.name },
-            !row.pop || Number(row.cases) === 0
-                ? null
-                : round_two_digits(
-                      Number(row.cases) /
-                          (Number(row.pop) / 100000) /
-                          row.daycount
-                  )
-        ])
-    ]
+    const update_slider = (ev) => _update_slider(ev.target.value)
+
+    // const preparedData = !!chart_data && [
+    //     [ 'Countries', 'Cases / 100k' ],
+    //     ...chart_data.countries.map((row) => [
+    //         { v: row.geo_code, f: row.name },
+    //         !row.pop || Number(row.cases) === 0
+    //             ? null
+    //             : round_two_digits(
+    //                   Number(row.cases) /
+    //                       (Number(row.pop) / 100000) /
+    //                       row.daycount
+    //               ),
+    //     ]),
+    // ]
 
     useEffect(
         () => {
             const end = add(parseISO(selected_date), {
-                days: 1
+                days: 1,
             })
             const start = sub(end, { days: 14 })
             const params = `worldmap?start=${format_date(
                 start
             )}&end=${format_date(end)}`
-            query_api(params).then(set_chart_data)
+            query_api(params).then((res) => {
+                for (const row of res.data) {
+                }
+            })
         },
         [ selected_date ]
     )
@@ -100,7 +105,7 @@ function Map () {
             ? {
                   display: 'block',
                   top: `${client_y + 15}px`,
-                  left: `${client_x + 15}px`
+                  left: `${client_x + 15}px`,
               }
             : { display: 'none' }
         set_tooltip_style(style)
@@ -119,6 +124,7 @@ function Map () {
         <div className={styles.container}>
             <div className={styles.map_container}>
                 <Svg
+                    // ref={svg_ref}
                     // viewBox={VIEWBOX.join(' ')}
                     className={styles.map}
                     onClick={print_code}
