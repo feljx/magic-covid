@@ -1,5 +1,9 @@
 import styles from './index.module.css'
 
+//
+// Tooltip Component
+//
+
 function Tooltip (props) {
     const data = props.children
     const name = props.name

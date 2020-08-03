@@ -1,7 +1,7 @@
 import { eachDayOfInterval, parseISO, isSameDay } from 'date-fns'
 
-import territories from './svg_map.json'
-import { get_color_fn } from '../../shared'
+import territories from '../svg_map.json'
+import { get_color_fn } from '../../../shared'
 
 // Constants
 export const VIEWBOX_BASE = [ 30.767, 241.591, 784.077, 458.627 ]
@@ -13,7 +13,8 @@ export const VIEWBOX_ZOOM = [
 ]
 
 // Color
-export const [ COLOR_MIN, COLOR_MAX ] = [ [ 193, 214, 232 ], [ 255, 0, 0 ] ]
+export const COLOR_MIN = [ 193, 214, 232 ]
+export const COLOR_MAX = [ 224, 0, 37 ]
 export const get_color = get_color_fn(COLOR_MIN, COLOR_MAX)
 export const [ MIN, MAX ] = [ 0, 25 ]
 

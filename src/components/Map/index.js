@@ -10,7 +10,7 @@ import {
     TERRITORIES,
     TERRITORIES_LIST,
     get_color
-} from './constants'
+} from './raw_svgs/constants'
 import Tooltip from './Tooltip'
 import SvgMap from './SvgMap'
 
@@ -94,7 +94,7 @@ function Map () {
         region.style.fill = 'yellow'
         const id = region.getAttribute('id')
     }
-    // Show and update tooltip when hovering over region, hide
+    // Update tooltip when hovering over region
     const _change_tooltip = debounce((id, client_x, client_y) => {
         const on_country = id !== 'world-map'
         const style = on_country
@@ -149,9 +149,5 @@ function Map () {
         </div>
     )
 }
-
-//
-// Tooltip Component
-//
 
 export default Map
