@@ -1,13 +1,21 @@
 import styles from './index.module.css'
-import { useEffect, useState, createRef } from 'react'
+import { useEffect, useState, createRef, useRef } from 'react'
 import { query_api } from '../../data/api_query'
-import { eachDayOfInterval, parseISO, sub, add, format } from 'date-fns'
+import {
+    eachDayOfInterval,
+    parseISO,
+    sub,
+    add,
+    format,
+    isSameDay
+} from 'date-fns'
 import {
     debounce,
     format_date,
     round_two_digits,
     tuples,
     debounce_ev,
+    get_color_fn
 } from '../../shared'
 import Svg from './Svg'
 
@@ -17,31 +25,37 @@ const VIEWBOX_ZOOM = [
     30.767 + 196.01925,
     241.591 + 114.65675 - 70,
     392.0385,
-    229.3135,
+    229.3135
 ]
 const TOOLTIP_HIDDEN = { display: 'none' }
 const TOOLTIP_VISIBLE = (ev) => ({
     display: 'block',
     top: `${ev.clientY + 15}px`,
-    left: `${ev.clientX + 15}px`,
+    left: `${ev.clientX + 15}px`
 })
 
+// Color
+const [ color1, color2 ] = [ [ 121, 190, 217 ], [ 255, 0, 0 ] ]
+const get_color = get_color_fn(color1, color2)
+
+// DAYS
 const all_days = eachDayOfInterval(
     {
         start: parseISO('2019-12-31'),
-        end: new Date(),
+        end: new Date()
     },
     { step: 2 }
-).map(format_date)
-
+)
 const last_day = all_days[all_days.length - 1]
-const today = format_date(new Date())
-if (last_day !== today) {
-    all_days.push(today)
-}
+const today = new Date()
+const today_not_included = !isSameDay(today, last_day)
+if (today_not_included) all_days.push(today)
 
+//
+// Component
+//
 function Map () {
-    const svg_ref = createRef()
+    const svg_ref = useRef(null)
 
     //
     // State
@@ -50,6 +64,7 @@ function Map () {
     const [ tooltip_styles, set_tooltip_style ] = useState({})
     const [ slider_index, set_slider_index ] = useState(all_days.length - 1)
     const selected_date = all_days[slider_index]
+    const localized_date = format(selected_date, 'PP')
 
     // Debounced helper function
     const _update_slider = debounce(set_slider_index)
@@ -71,22 +86,25 @@ function Map () {
 
     useEffect(
         () => {
-            const end = add(parseISO(selected_date), {
-                days: 1,
-            })
+            const end = add(selected_date, { days: 1 })
             const start = sub(end, { days: 14 })
-            const params = `worldmap?start=${format_date(
-                start
-            )}&end=${format_date(end)}`
-            query_api(params).then((res) => {
+            const query_string = [ [ 'end', end ], [ 'start', start ] ]
+                .map(([ field, value ]) => `${field}=${format_date(value)}`)
+                .join('&')
+
+            query_api('worldmap', query_string).then((res) => {
                 for (const row of res.data) {
+                    const id = row.geo_code.toLowerCase()
+                    const region = svg_ref.current.getElementById(id)
+                    region && (region.style.fill = 'green')
                 }
+                const somalia = svg_ref.current.getElementById('so')
+                const somaliland = svg_ref.current.getElementById('_somaliland')
+                somaliland.style.fill = somalia.style.fill
             })
         },
         [ selected_date ]
     )
-
-    const localized_date = format(parseISO(selected_date), 'PP')
 
     //
     // Event handlers
@@ -105,7 +123,7 @@ function Map () {
             ? {
                   display: 'block',
                   top: `${client_y + 15}px`,
-                  left: `${client_x + 15}px`,
+                  left: `${client_x + 15}px`
               }
             : { display: 'none' }
         set_tooltip_style(style)
@@ -122,10 +140,22 @@ function Map () {
     //
     return (
         <div className={styles.container}>
+            <div>
+                14 day moving average on <br /> {localized_date}
+            </div>
+            <input
+                className={styles.slider}
+                type="range"
+                min="0"
+                max={all_days.length - 1}
+                step="1"
+                value={slider_index}
+                onChange={update_slider}
+            />
             <div className={styles.map_container}>
                 <Svg
-                    // ref={svg_ref}
                     // viewBox={VIEWBOX.join(' ')}
+                    ref={svg_ref}
                     className={styles.map}
                     onClick={print_code}
                     onMouseMove={change_tooltip}

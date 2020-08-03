@@ -65,3 +65,17 @@ export function format_date (date) {
         date.getDate()
     )}`
 }
+
+export function get_color_fn (color_1, color_2) {
+    return function (n) {
+        const dr = color_2[0] - color_1[0]
+        const dg = color_2[1] - color_1[1]
+        const db = color_2[2] - color_1[2]
+        const [ r, g, b ] = [
+            dr * n + color_1[0],
+            dg * n + color_1[1],
+            db * n + color_1[2]
+        ]
+        return [ r, g, b ]
+    }
+}

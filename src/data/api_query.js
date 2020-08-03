@@ -22,9 +22,9 @@ AND
 GROUP BY
     d.geo_code, c.name, c.pop;`
 
-export async function query_api (query_string) {
+export async function query_api (route, query_string) {
     const api_promise = await fetch(
-        `${window.location.origin}/api/${query_string}`
+        `${window.location.origin}/api/${route}?${query_string || ''}`
     )
     return api_promise.json()
 }
