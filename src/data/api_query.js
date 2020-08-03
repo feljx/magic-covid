@@ -20,7 +20,9 @@ WHERE
 AND
     time BETWEEN '${start}' AND '${end}'
 GROUP BY
-    d.geo_code, c.name, c.pop;`
+    d.geo_code, c.name, c.pop
+ORDER BY
+    d.geo_code;`
 
 export async function query_api (route, query_string) {
     const api_promise = await fetch(

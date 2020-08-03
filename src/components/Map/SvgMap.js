@@ -12,11 +12,6 @@ const SvgWorld3 = React.forwardRef(({ onClick, ...props }, ref) => {
             id="world-map"
             {...props}
         >
-            <desc>
-                {
-                    '\r\n    Author: Al MacDonald\r\n    Editor: Fritz Lekschas\r\n    License: CC BY-SA 3.0\r\n    ID: ISO 3166-1 or "_[a-zA-Z]" if an ISO code is not available\r\n'
-                }
-            </desc>
             <g onClick={onClick}>
                 <path
                     id="_somaliland"

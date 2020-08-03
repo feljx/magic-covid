@@ -8,7 +8,7 @@ import { debounce, format_date, round_two_digits, tuples } from '../../shared'
 const all_days = eachDayOfInterval(
     {
         start: parseISO('2019-12-31'),
-        end: new Date(),
+        end: new Date()
     },
     { step: 2 }
 ).map(format_date)
@@ -24,8 +24,8 @@ const chartEvents = [
         eventName: 'select',
         callback ({ chartWrapper }) {
             console.log('Selected ', chartWrapper.getChart().getSelection())
-        },
-    },
+        }
+    }
 ]
 
 function Map () {
@@ -49,14 +49,14 @@ function Map () {
                       Number(row.cases) /
                           (Number(row.pop) / 100000) /
                           row.daycount
-                  ),
-        ]),
+                  )
+        ])
     ]
 
     useEffect(
         () => {
             const end = add(parseISO(selected_date), {
-                days: 1,
+                days: 1
             })
 
             const start = sub(end, { days: 14 })
@@ -97,8 +97,8 @@ function Map () {
                             const region = selection[0].row
                             const selected_data = preparedData[region + 1]
                             console.log('Selected:', selected_data)
-                        },
-                    },
+                        }
+                    }
                 ]}
                 chartType="GeoChart"
                 data={preparedData}
@@ -107,7 +107,7 @@ function Map () {
                         left: '30%',
                         top: '30%',
                         width: '100%',
-                        height: '100%',
+                        height: '100%'
                     },
                     legend: 'none',
                     backgroundColor: 'transparent',
@@ -115,8 +115,8 @@ function Map () {
                     colorAxis: {
                         minValue: 0,
                         maxValue: 20,
-                        colors: [ '#79bed9', '#ff0000' ],
-                    },
+                        colors: [ '#79bed9', '#ff0000' ]
+                    }
                 }}
             />
         </div>

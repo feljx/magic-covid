@@ -1,89 +1,39 @@
+import { useEffect, useState, useRef } from 'react'
+import { sub, add, format } from 'date-fns'
+
 import styles from './index.module.css'
-import { useEffect, useState, createRef, useRef } from 'react'
 import { query_api } from '../../data/api_query'
+import { debounce, format_date, round_two_digits } from '../../shared'
 import {
-    eachDayOfInterval,
-    parseISO,
-    sub,
-    add,
-    format,
-    isSameDay,
-} from 'date-fns'
-import {
-    debounce,
-    format_date,
-    round_two_digits,
-    tuples,
-    debounce_ev,
-    get_color_fn,
-} from '../../shared'
-import Svg from './Svg'
-
-// Constants
-const VIEWBOX_BASE = [ 30.767, 241.591, 784.077, 458.627 ]
-const VIEWBOX_ZOOM = [
-    30.767 + 196.01925,
-    241.591 + 114.65675 - 70,
-    392.0385,
-    229.3135,
-]
-const TOOLTIP_HIDDEN = { display: 'none' }
-const TOOLTIP_VISIBLE = (ev) => ({
-    display: 'block',
-    top: `${ev.clientY + 15}px`,
-    left: `${ev.clientX + 15}px`,
-})
-
-// Color
-const [ color1, color2 ] = [ [ 121, 190, 217 ], [ 255, 0, 0 ] ]
-const get_color = get_color_fn(color1, color2)
-const [ min, max ] = [ 0, 20 ]
-
-// DAYS
-const all_days = eachDayOfInterval(
-    {
-        start: parseISO('2019-12-31'),
-        end: new Date(),
-    },
-    { step: 2 }
-)
-const last_day = all_days[all_days.length - 1]
-const today = new Date()
-const today_not_included = !isSameDay(today, last_day)
-if (today_not_included) all_days.push(today)
+    ALL_DAYS,
+    MAX,
+    TERRITORIES,
+    TERRITORIES_LIST,
+    get_color
+} from './constants'
+import Tooltip from './Tooltip'
+import SvgMap from './SvgMap'
 
 //
-// Component
+// Map Component
 //
+
 function Map () {
     const svg_ref = useRef(null)
 
     //
     // State
     //
-    const [ tooltip_content, set_tooltip_content ] = useState('')
-    const [ tooltip_styles, set_tooltip_style ] = useState({})
-    const [ slider_index, set_slider_index ] = useState(all_days.length - 1)
-    const selected_date = all_days[slider_index]
+
+    const [ tooltip_props, set_tooltip_props ] = useState('')
+    const [ map_data, set_map_data ] = useState(null)
+    const [ slider_index, set_slider_index ] = useState(ALL_DAYS.length - 1)
+    const selected_date = ALL_DAYS[slider_index]
     const localized_date = format(selected_date, 'PP')
 
-    // Debounced helper function
-    const _update_slider = debounce(set_slider_index)
-    const update_slider = (ev) => _update_slider(ev.target.value)
-
-    // const preparedData = !!chart_data && [
-    //     [ 'Countries', 'Cases / 100k' ],
-    //     ...chart_data.countries.map((row) => [
-    //         { v: row.geo_code, f: row.name },
-    //         !row.pop || Number(row.cases) === 0
-    //             ? null
-    //             : round_two_digits(
-    //                   Number(row.cases) /
-    //                       (Number(row.pop) / 100000) /
-    //                       row.daycount
-    //               ),
-    //     ]),
-    // ]
+    //
+    // Data querying and associated side effects
+    //
 
     useEffect(
         () => {
@@ -94,23 +44,37 @@ function Map () {
                 .join('&')
 
             query_api('worldmap', query_string).then((res) => {
+                // Reset all region colors to white
+                for (const id of TERRITORIES_LIST) {
+                    const region = svg_ref.current.getElementById(id)
+                    region && (region.style.fill = 'rgba(140, 140, 140)')
+                }
+                // Iterate through queried data
+                const map_data = {}
                 for (const row of res.data) {
                     const id = row.geo_code.toLowerCase()
+                    map_data[id] = row
                     const region = svg_ref.current.getElementById(id)
-                    region && (region.style.fill = 'green')
-
-                    const val =
-                        !row.pop || Number(row.cases) === 0
-                            ? null
-                            : round_two_digits(
-                                  Number(row.cases) /
-                                      (Number(row.pop) / 100000) /
-                                      row.daycount
-                              )
+                    if (region) {
+                        const val_invalid = !row.pop || Number(row.cases) === 0
+                        if (!val_invalid) {
+                            const val =
+                                round_two_digits(
+                                    Number(row.cases) /
+                                        (Number(row.pop) / 100000) /
+                                        row.daycount
+                                ) / MAX
+                            const color = get_color(val).join(', ')
+                            region.style.fill = `rgb(${color})`
+                        }
+                    }
                 }
+                // Fill Somaliland with Somalia's data
                 const somalia = svg_ref.current.getElementById('so')
                 const somaliland = svg_ref.current.getElementById('_somaliland')
                 somaliland.style.fill = somalia.style.fill
+                // Save data to state for later access
+                set_map_data(map_data)
             })
         },
         [ selected_date ]
@@ -119,26 +83,35 @@ function Map () {
     //
     // Event handlers
     //
-    // Color regions red on click
+
+    // Update slider
+    const _update_slider = debounce(set_slider_index)
+    const update_slider = (ev) => _update_slider(ev.target.value)
+
+    // Color regions yellow on click
     const print_code = (ev) => {
         const region = ev.target.closest('[id]')
-        region.style.fill = 'red'
+        region.style.fill = 'yellow'
         const id = region.getAttribute('id')
     }
-    // Debounced helper function
+    // Show and update tooltip when hovering over region, hide
     const _change_tooltip = debounce((id, client_x, client_y) => {
         const on_country = id !== 'world-map'
-        if (on_country) set_tooltip_content(id)
         const style = on_country
             ? {
                   display: 'block',
                   top: `${client_y + 15}px`,
-                  left: `${client_x + 15}px`,
+                  left: `${client_x + 15}px`
               }
             : { display: 'none' }
-        set_tooltip_style(style)
+        if (on_country && !!map_data)
+            set_tooltip_props({
+                name: TERRITORIES[id],
+                children: map_data[id],
+                style
+            })
+        else set_tooltip_props({ style })
     })
-    // Show and update tooltip when hovering over region, hide
     const change_tooltip = (ev) => {
         const region = ev.target.closest('[id]')
         const id = region.getAttribute('id')
@@ -146,8 +119,9 @@ function Map () {
     }
 
     //
-    // Render
+    // Rendering
     //
+
     return (
         <div className={styles.container}>
             <div>
@@ -157,13 +131,13 @@ function Map () {
                 className={styles.slider}
                 type="range"
                 min="0"
-                max={all_days.length - 1}
+                max={ALL_DAYS.length - 1}
                 step="1"
                 value={slider_index}
                 onChange={update_slider}
             />
             <div className={styles.map_container}>
-                <Svg
+                <SvgMap
                     // viewBox={VIEWBOX.join(' ')}
                     ref={svg_ref}
                     className={styles.map}
@@ -171,11 +145,13 @@ function Map () {
                     onMouseMove={change_tooltip}
                 />
             </div>
-            <div className={styles.tooltip} style={tooltip_styles}>
-                {tooltip_content}
-            </div>
+            {<Tooltip {...tooltip_props} />}
         </div>
     )
 }
+
+//
+// Tooltip Component
+//
 
 export default Map
