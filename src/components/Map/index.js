@@ -7,7 +7,7 @@ import {
     sub,
     add,
     format,
-    isSameDay
+    isSameDay,
 } from 'date-fns'
 import {
     debounce,
@@ -15,7 +15,7 @@ import {
     round_two_digits,
     tuples,
     debounce_ev,
-    get_color_fn
+    get_color_fn,
 } from '../../shared'
 import Svg from './Svg'
 
@@ -25,24 +25,25 @@ const VIEWBOX_ZOOM = [
     30.767 + 196.01925,
     241.591 + 114.65675 - 70,
     392.0385,
-    229.3135
+    229.3135,
 ]
 const TOOLTIP_HIDDEN = { display: 'none' }
 const TOOLTIP_VISIBLE = (ev) => ({
     display: 'block',
     top: `${ev.clientY + 15}px`,
-    left: `${ev.clientX + 15}px`
+    left: `${ev.clientX + 15}px`,
 })
 
 // Color
 const [ color1, color2 ] = [ [ 121, 190, 217 ], [ 255, 0, 0 ] ]
 const get_color = get_color_fn(color1, color2)
+const [ min, max ] = [ 0, 20 ]
 
 // DAYS
 const all_days = eachDayOfInterval(
     {
         start: parseISO('2019-12-31'),
-        end: new Date()
+        end: new Date(),
     },
     { step: 2 }
 )
@@ -97,6 +98,15 @@ function Map () {
                     const id = row.geo_code.toLowerCase()
                     const region = svg_ref.current.getElementById(id)
                     region && (region.style.fill = 'green')
+
+                    const val =
+                        !row.pop || Number(row.cases) === 0
+                            ? null
+                            : round_two_digits(
+                                  Number(row.cases) /
+                                      (Number(row.pop) / 100000) /
+                                      row.daycount
+                              )
                 }
                 const somalia = svg_ref.current.getElementById('so')
                 const somaliland = svg_ref.current.getElementById('_somaliland')
@@ -123,7 +133,7 @@ function Map () {
             ? {
                   display: 'block',
                   top: `${client_y + 15}px`,
-                  left: `${client_x + 15}px`
+                  left: `${client_x + 15}px`,
               }
             : { display: 'none' }
         set_tooltip_style(style)
