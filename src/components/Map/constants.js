@@ -1,7 +1,7 @@
 import { eachDayOfInterval, parseISO, isSameDay } from 'date-fns'
 
-import territories from '../svg_map.json'
-import { get_color_fn } from '../../../shared'
+import territories from './svg_map.json'
+import { get_color_fn } from '../../shared'
 
 // Constants
 export const VIEWBOX_BASE = [ 30.767, 241.591, 784.077, 458.627 ]
@@ -16,7 +16,7 @@ export const VIEWBOX_ZOOM = [
 export const COLOR_MIN = [ 193, 214, 232 ]
 export const COLOR_MAX = [ 224, 0, 37 ]
 export const get_color = get_color_fn(COLOR_MIN, COLOR_MAX)
-export const [ MIN, MAX ] = [ 0, 25 ]
+export const [ MIN, MAX ] = [ 0, 22 ]
 
 // Territories
 export const TERRITORIES = territories
@@ -28,7 +28,7 @@ export const ALL_DAYS = eachDayOfInterval(
         start: parseISO('2019-12-31'),
         end: new Date()
     },
-    { step: 2 }
+    { step: 1 }
 )
 export const last_day = ALL_DAYS[ALL_DAYS.length - 1]
 export const today = new Date()

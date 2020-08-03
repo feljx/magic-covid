@@ -10,7 +10,7 @@ import {
     TERRITORIES,
     TERRITORIES_LIST,
     get_color
-} from './raw_svgs/constants'
+} from './constants'
 import Tooltip from './Tooltip'
 import SvgMap from './SvgMap'
 
@@ -35,50 +35,51 @@ function Map () {
     // Data querying and associated side effects
     //
 
-    useEffect(
-        () => {
-            const end = add(selected_date, { days: 1 })
-            const start = sub(end, { days: 14 })
-            const query_string = [ [ 'end', end ], [ 'start', start ] ]
-                .map(([ field, value ]) => `${field}=${format_date(value)}`)
-                .join('&')
+    const _useEffect = debounce(() => {
+        const end = add(selected_date, { days: 1 })
+        const start = sub(end, { days: 14 })
+        const query_string = [ [ 'end', end ], [ 'start', start ] ]
+            .map(([ field, value ]) => `${field}=${format_date(value)}`)
+            .join('&')
 
-            query_api('worldmap', query_string).then((res) => {
-                // Reset all region colors to white
-                for (const id of TERRITORIES_LIST) {
-                    const region = svg_ref.current.getElementById(id)
-                    region && (region.style.fill = 'rgba(140, 140, 140)')
-                }
-                // Iterate through queried data
-                const map_data = {}
-                for (const row of res.data) {
-                    const id = row.geo_code.toLowerCase()
-                    map_data[id] = row
-                    const region = svg_ref.current.getElementById(id)
-                    if (region) {
-                        const val_invalid = !row.pop || Number(row.cases) === 0
-                        if (!val_invalid) {
-                            const val =
-                                round_two_digits(
-                                    Number(row.cases) /
-                                        (Number(row.pop) / 100000) /
-                                        row.daycount
-                                ) / MAX
-                            const color = get_color(val).join(', ')
-                            region.style.fill = `rgb(${color})`
-                        }
+        query_api('worldmap', query_string).then((res) => {
+            // Reset all region colors to white
+            for (const id of TERRITORIES_LIST) {
+                const region = svg_ref.current.getElementById(id)
+                region && (region.style.fill = 'rgba(140, 140, 140)')
+            }
+            // Iterate through queried data
+            const map_data = {}
+            for (const row of res.data) {
+                const id = row.geo_code.toLowerCase()
+                const cases_per_100k =
+                    round_two_digits(
+                        Number(row.cases) /
+                            (Number(row.pop) / 100000) /
+                            row.daycount
+                    ) / MAX
+                map_data[id] = { cases_per_100k, ...row }
+                const region = svg_ref.current.getElementById(id)
+                if (region) {
+                    const no_pop_data = !row.pop
+                    const zero_cases = Number(row.cases) === 0
+                    const should_fill_color = !(no_pop_data || zero_cases)
+                    if (should_fill_color) {
+                        const color = get_color(cases_per_100k).join(', ')
+                        region.style.fill = `rgb(${color})`
                     }
                 }
-                // Fill Somaliland with Somalia's data
-                const somalia = svg_ref.current.getElementById('so')
-                const somaliland = svg_ref.current.getElementById('_somaliland')
-                somaliland.style.fill = somalia.style.fill
-                // Save data to state for later access
-                set_map_data(map_data)
-            })
-        },
-        [ selected_date ]
-    )
+            }
+            // Fill Somaliland with Somalia's data
+            const somalia = svg_ref.current.getElementById('so')
+            const somaliland = svg_ref.current.getElementById('_somaliland')
+            somaliland.style.fill = somalia.style.fill
+            // Save data to state for later access
+            set_map_data(map_data)
+        })
+    })
+
+    useEffect(_useEffect, [ selected_date ])
 
     //
     // Event handlers
@@ -106,8 +107,8 @@ function Map () {
             : { display: 'none' }
         if (on_country && !!map_data)
             set_tooltip_props({
-                name: TERRITORIES[id],
-                children: map_data[id],
+                name: TERRITORIES[id] || map_data[id].name,
+                data: map_data[id],
                 style
             })
         else set_tooltip_props({ style })

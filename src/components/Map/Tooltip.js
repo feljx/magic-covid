@@ -5,8 +5,7 @@ import styles from './index.module.css'
 //
 
 function Tooltip (props) {
-    const data = props.children
-    const name = props.name
+    const data = props.data
     const fields = data
         ? [
               [ 'Cases', 'cases' ],
@@ -20,7 +19,7 @@ function Tooltip (props) {
     ))
     return (
         <div className={styles.tooltip} style={props.style}>
-            <p>{name}</p>
+            <p>{props.name}</p>
             {other_info}
         </div>
     )
