@@ -6,10 +6,12 @@ import { query_api } from '../../data/api_query'
 import { debounce, format_date, round_two_digits } from '../../shared'
 import {
     ALL_DAYS,
+    MID,
     MAX,
     TERRITORIES,
     TERRITORIES_LIST,
-    get_color
+    get_color_lower,
+    get_color_upper
 } from './constants'
 import Tooltip from './Tooltip'
 import SvgMap from './SvgMap'
@@ -27,6 +29,7 @@ function Map () {
 
     const [ tooltip_props, set_tooltip_props ] = useState('')
     const [ map_data, set_map_data ] = useState(null)
+    const [ current_region, set_current_region ] = useState(null)
     const [ slider_index, set_slider_index ] = useState(ALL_DAYS.length - 1)
     const selected_date = ALL_DAYS[slider_index]
     const localized_date = format(selected_date, 'PP')
@@ -52,12 +55,9 @@ function Map () {
             const map_data = {}
             for (const row of res.data) {
                 const id = row.geo_code.toLowerCase()
-                const cases_per_100k =
-                    round_two_digits(
-                        Number(row.cases) /
-                            (Number(row.pop) / 100000) /
-                            row.daycount
-                    ) / MAX
+                const cases_per_100k = round_two_digits(
+                    Number(row.cases) / (Number(row.pop) / 100000) / row.daycount
+                )
                 map_data[id] = { cases_per_100k, ...row }
                 const region = svg_ref.current.getElementById(id)
                 if (region) {
@@ -65,7 +65,13 @@ function Map () {
                     const zero_cases = Number(row.cases) === 0
                     const should_fill_color = !(no_pop_data || zero_cases)
                     if (should_fill_color) {
-                        const color = get_color(cases_per_100k).join(', ')
+                        const lower_scale = cases_per_100k < MID
+                        const cases_adjusted =
+                            cases_per_100k - (!lower_scale ? MID : 0)
+                        const divisor = lower_scale ? MID : MAX - MID
+                        const color_fn =
+                            cases_per_100k <= MID ? get_color_lower : get_color_upper
+                        const color = color_fn(cases_adjusted / divisor).join(', ')
                         region.style.fill = `rgb(${color})`
                     }
                 }
@@ -96,7 +102,8 @@ function Map () {
         const id = region.getAttribute('id')
     }
     // Update tooltip when hovering over region
-    const _change_tooltip = debounce((id, client_x, client_y) => {
+    const _change_tooltip = debounce((region, client_x, client_y) => {
+        const id = region.getAttribute('id')
         const on_country = id !== 'world-map'
         const style = on_country
             ? {
@@ -105,18 +112,26 @@ function Map () {
                   left: `${client_x + 15}px`
               }
             : { display: 'none' }
-        if (on_country && !!map_data)
+        if (current_region) {
+            current_region.style.removeProperty('stroke')
+            current_region.style.removeProperty('strokeWidth')
+            current_region.style.removeProperty('transform')
+        }
+        if (on_country && map_data) {
+            region.style.stroke = '#059e7a'
+            region.style.strokeWidth = '2'
+            region.style.filter = 'contrast(500%);'
+            set_current_region(region)
             set_tooltip_props({
                 name: TERRITORIES[id] || map_data[id].name,
                 data: map_data[id],
                 style
             })
-        else set_tooltip_props({ style })
+        } else set_tooltip_props({ style })
     })
     const change_tooltip = (ev) => {
         const region = ev.target.closest('[id]')
-        const id = region.getAttribute('id')
-        _change_tooltip(id, ev.clientX, ev.clientY)
+        _change_tooltip(region, ev.clientX, ev.clientY)
     }
 
     //

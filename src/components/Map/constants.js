@@ -14,9 +14,12 @@ export const VIEWBOX_ZOOM = [
 
 // Color
 export const COLOR_MIN = [ 193, 214, 232 ]
+// export const COLOR_MID = [ 111, 77, 191 ]
+export const COLOR_MID = [ 142, 105, 207 ]
 export const COLOR_MAX = [ 224, 0, 37 ]
-export const get_color = get_color_fn(COLOR_MIN, COLOR_MAX)
-export const [ MIN, MAX ] = [ 0, 22 ]
+export const get_color_lower = get_color_fn(COLOR_MIN, COLOR_MID)
+export const get_color_upper = get_color_fn(COLOR_MID, COLOR_MAX)
+export const [ MIN, MID, MAX ] = [ 0, 5, 25 ]
 
 // Territories
 export const TERRITORIES = territories

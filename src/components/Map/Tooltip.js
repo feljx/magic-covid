@@ -10,8 +10,7 @@ function Tooltip (props) {
         ? [
               [ 'Cases', 'cases' ],
               [ 'Deaths', 'deaths' ],
-              [ 'Population', 'pop' ],
-              [ 'Datapoints', 'daycount' ]
+              [ 'Cases / 100k', 'cases_per_100k' ]
           ]
         : []
     const other_info = fields.map(([ field, key ]) => (
