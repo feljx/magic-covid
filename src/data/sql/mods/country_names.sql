@@ -4,6 +4,16 @@ UPDATE
 SET
     name = REPLACE(name, '_', ' ');
 
+
+-- format "international conveyance Japan" correctly
+UPDATE
+    countries
+SET
+    name = 'International Conveyance (Cruise Ship) (Japan)'
+WHERE
+    name like '%conveyance%';
+
+
 -- change Britain's geo code from UK to GB
 UPDATE
     countries
@@ -11,6 +21,7 @@ SET
     geo_code = 'GB'
 WHERE
     geo_code = 'UK';
+
 
 -- change Greece's geo code from EL to GR
 UPDATE
@@ -20,10 +31,12 @@ SET
 WHERE
     geo_code = 'EL';
 
--- format "international conveyance Japan" correctly
+
+-- fix Côte d'Ivoire's name
 UPDATE
     countries
 SET
-    name = 'International Conveyance (Cruise Ship) (Japan)'
+    name = "Côte d'Ivoire"
 WHERE
-    name like '%conveyance%';
+    geo_code = 'CI';
+
