@@ -12,8 +12,10 @@ export const getServerSideProps = async () => {
     try {
         return {
             props: {
-                continents: await query_db(ALL_CONTINENTS),
-                countries: await query_db(ALL_COUNTRIES),
+                items: [
+                    ...(await query_db(ALL_CONTINENTS)),
+                    ...(await query_db(ALL_COUNTRIES)),
+                ],
             },
         }
     } catch (error) {
