@@ -7,17 +7,14 @@
         "start": "NODE_ENV=production && pm2 start npx --name 'next server' -- next -- start",
         "restart": "pm2 stop all && npm run build && pm2 restart all",
         "datarestart": "pm2 stop all && npm run loaddata && npm run build && pm2 restart all",
-
         "parse": "node src/data/sql_parse.js",
         "feed": "node src/data/db_feed.js",
         "clear": "node src/data/db_clear.js",
-
         "data": "node src/data/json_get.js",
         "predb": "npm run parse",
         "db": "npm run clear",
         "postdb": "npm run feed",
         "updb": "npm run data && npm run db",
-
         "types": "tcm src",
         "repair": "python src/data/json_repair.py",
         "makemap": "svgr --no-svgo src/components/Map/world3.svg > src/components/Map/Svg.js"
