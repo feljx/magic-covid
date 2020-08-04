@@ -28,11 +28,18 @@
 .tooltip {
     display: none;
     position: fixed;
+    font-family: Helvetica, sans-serif;
+    padding: 0.4rem;
+
     color: rgb(190, 190, 190);
     background-color: rgb(21, 26, 46);
     border: 1px solid rgb(190, 190, 190);
     outline: 2px solid rgb(21, 26, 46);
-    padding: 0.4rem;
+
     user-select: none;
     pointer-events: none;
+}
+
+.tooltip > *:first-child {
+    font-weight: bold;
 }

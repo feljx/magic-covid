@@ -33,10 +33,10 @@ WHERE
 
 
 -- fix Côte d'Ivoire's name
-UPDATE
-    countries
-SET
-    name = "Côte d'Ivoire"
-WHERE
-    geo_code = 'CI';
+-- UPDATE
+--     countries
+-- SET
+--     name = "Côte d'Ivoire"
+-- WHERE
+--     geo_code = 'CI';
 

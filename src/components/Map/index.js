@@ -144,7 +144,7 @@ function Map () {
                 14 day moving average on <br /> {localized_date}
             </div>
             <input
-                className={styles.slider}
+                className={`styles.slider slider`}
                 type="range"
                 min="0"
                 max={ALL_DAYS.length - 1}
