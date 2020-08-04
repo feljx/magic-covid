@@ -1,12 +1,15 @@
+import { useState } from 'react'
+
 import styles from './index.module.css'
-import Search from '../Search'
 import Title from '../Title'
+import Search from '../Search'
+import Map from '../Map'
 
 //
 // React Component
 //
 
-function Home ({ continents, countries }) {
+function Home ({ items }) {
     // State
     const [ SEARCH, MAP ] = [ 0, 1 ]
     const MODE_LABEL = [ 'Map', 'Search' ]
@@ -21,10 +24,14 @@ function Home ({ continents, countries }) {
     return (
         <div className={styles.container}>
             <Title />
-            <Button onClick={MODE_LABEL[mode]}>{mode}</Button>
-            {mode === SEARCH ? <Search data={[ continents, countries ]} /> : <Map />}
+            <Button onClick={updateMode}>{MODE_LABEL[mode]}</Button>
+            {mode === SEARCH ? <Search items={items} /> : <Map />}
         </div>
     )
+}
+
+function Button ({ onClick, children }) {
+    return <button onClick={onClick}>{children}</button>
 }
 
 export default Home

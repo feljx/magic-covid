@@ -10,15 +10,18 @@ parse_table(
     // table name
     CONTINENTS,
     // columns
-    { name: 'text', pop: 'bigint DEFAULT NULL' },
+    { name: 'text', geo_code: 'varchar(2) DEFAULT NULL', pop: 'bigint DEFAULT NULL' },
     // primary key
     'name',
     // reducer
     // maps raw json input to array of column values to insert (in correct order)
     function (raw) {
-        return [
-            ...new Set(raw.records.map((r) => r.continentExp)),
-        ].map((continent) => [ textify(continent), 'NULL' ])
+        const uniques = new Set(raw.records.map((r) => r.continentExp))
+        return [ ...uniques ].map((continent) => [
+            textify(continent),
+            'NULL',
+            'NULL',
+        ])
     }
 )
 
@@ -52,9 +55,7 @@ parse_table(
         // convert set back to array by spreading contents into array literal
         return [ ...set_of_uniques ].map((stringified_tuple) => {
             // parse stringified tuple to get values
-            const [ name, geo_code, pop, continent ] = JSON.parse(
-                stringified_tuple
-            )
+            const [ name, geo_code, pop, continent ] = JSON.parse(stringified_tuple)
             return [ textify(name), textify(geo_code), pop, textify(continent) ]
         })
     }

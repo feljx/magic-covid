@@ -1,6 +1,7 @@
-import Link from 'next/link'
-import styles from './index.module.css'
 import { useState } from 'react'
+import Link from 'next/link'
+
+import styles from './index.module.css'
 
 //
 // Search
@@ -15,19 +16,32 @@ function Search ({ items }) {
     const listItems = input === EMPTY ? selected : items.filter(forInput).slice(0, 10)
 
     // Event Handlers
-    const updateInput = function (ev) {
+    const updateInput = (ev) => {
         setInput(ev.target.value)
     }
 
-    const updateSelected = function (ev) {
-        setInput(ev.target.value)
+    const updateSelected = (item) => () => {
+        if (!selected.includes(item)) {
+            setSelected([ ...selected, item ])
+        }
+        setInput(EMPTY)
+    }
+
+    const removeSelected = (item) => () => {
+        if (selected.includes(item)) {
+            setSelected(selected.filter((_item) => _item !== item))
+        }
     }
 
     // Render
     return (
         <div className={styles.search}>
-            <Field onChange={updateInput}>{input}</Field>
-            <List showSelected={input === EMPTY} updateSelected={updateSelected}>
+            <Field updateInput={updateInput}>{input}</Field>
+            <List
+                showSelected={input === EMPTY}
+                updateSelected={updateSelected}
+                removeSelected={removeSelected}
+            >
                 {listItems}
             </List>
         </div>
@@ -38,13 +52,13 @@ function Search ({ items }) {
 // Search Field
 //
 
-function Field (props) {
+function Field ({ children, updateInput }) {
     return (
         <input
             className={styles.field}
             type="text"
             value={children}
-            onChange={update_input_val}
+            onChange={updateInput}
             placeholder="Country or continent"
         />
     )
@@ -54,18 +68,33 @@ function Field (props) {
 // Search List
 //
 
-function List ({ children, showSelected, updateSelected }) {
+function List ({ children, showSelected, updateSelected, removeSelected }) {
     const listMode = showSelected ? styles.list_item_selected : styles.list_item
 
-    function ListItem ({ name, geo_code }) {
+    function ListItem ({ data }) {
         return (
-            <li className={listMode} onClick={updateSelected} key={geo_code || name}>
-                {name}
+            <li
+                className={listMode}
+                onClick={showSelected ? null : updateSelected(data)}
+            >
+                {data.name}
+                {showSelected && (
+                    <span
+                        className={styles.list_item_selected_x}
+                        onClick={removeSelected(data)}
+                    >
+                        x
+                    </span>
+                )}
             </li>
         )
     }
 
-    return <ul className={styles.list}>{children.map(ListItem)}</ul>
+    return (
+        <ul className={styles.list}>
+            {children.map((item) => <ListItem key={item.geo_code} data={item} />)}
+        </ul>
+    )
 }
 
 /* <Link
@@ -74,3 +103,5 @@ function List ({ children, showSelected, updateSelected }) {
     key={country.geo_code}
     > */
 //     </Link>
+
+export default Search
