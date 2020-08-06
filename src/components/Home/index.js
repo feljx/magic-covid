@@ -26,6 +26,7 @@ function Home ({ items }) {
             <Title />
             <Button onClick={updateMode}>{MODE_LABEL[mode]}</Button>
             {mode === SEARCH ? <Search items={items} /> : <Map />}
+            <Display />
         </div>
     )
 }
