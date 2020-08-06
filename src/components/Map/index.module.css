@@ -1,4 +1,7 @@
 .container {
+    grid-area: content;
+    margin-top: -3rem;
+
     fill: rgb(190, 190, 190);
     width: 100%;
     height: 100%;

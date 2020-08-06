@@ -35,18 +35,18 @@ function Detail ({ data }) {
                     {
                         label: 'Cases',
                         borderColor: 'rgb(142, 185, 222)',
-                        data: data_cases
+                        data: data_cases,
                     },
                     {
                         label: 'Deaths',
                         borderColor: 'rgb(212, 58, 79)',
-                        data: data_deaths
-                    }
-                ]
+                        data: data_deaths,
+                    },
+                ],
             },
             options: {
-                legend: { display: true }
-            }
+                legend: { display: true },
+            },
         })
     }, [])
     return (
@@ -71,5 +71,5 @@ const MONTHS = [
     'Sep',
     'Oct',
     'Nov',
-    'Dec'
+    'Dec',
 ]

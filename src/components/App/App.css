@@ -15,4 +15,12 @@ body {
 #__next {
     width: 100%;
     height: 100%;
+
+    display: grid;
+    grid-template-areas: ". . ." ". content ." ". . .";
+    grid-template-columns: minmax(1rem, auto) minmax(55%, calc(65rem + 4vw))
+        minmax(1rem, auto);
+    grid-template-rows: auto auto auto;
+    row-gap: 2rem;
+    /* justify-items: center; */
 }
