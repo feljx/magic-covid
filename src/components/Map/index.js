@@ -11,7 +11,7 @@ import {
     TERRITORIES,
     TERRITORIES_LIST,
     get_color_lower,
-    get_color_upper
+    get_color_upper,
 } from './constants'
 import Tooltip from './Tooltip'
 import SvgMap from './SvgMap'
@@ -20,7 +20,7 @@ import SvgMap from './SvgMap'
 // Map Component
 //
 
-function Map () {
+function Map ({ updateDisplayed }) {
     const svg_ref = useRef(null)
 
     //
@@ -56,7 +56,9 @@ function Map () {
             for (const row of res.data) {
                 const id = row.geo_code.toLowerCase()
                 const cases_per_100k = round_two_digits(
-                    Number(row.cases) / (Number(row.pop) / 100000) / row.daycount
+                    Number(row.cases) /
+                        (Number(row.pop) / 100000) /
+                        row.daycount
                 )
                 map_data[id] = { cases_per_100k, ...row }
                 const region = svg_ref.current.getElementById(id)
@@ -70,8 +72,12 @@ function Map () {
                             cases_per_100k - (!lower_scale ? MID : 0)
                         const divisor = lower_scale ? MID : MAX - MID
                         const color_fn =
-                            cases_per_100k <= MID ? get_color_lower : get_color_upper
-                        const color = color_fn(cases_adjusted / divisor).join(', ')
+                            cases_per_100k <= MID
+                                ? get_color_lower
+                                : get_color_upper
+                        const color = color_fn(cases_adjusted / divisor).join(
+                            ', '
+                        )
                         region.style.fill = `rgb(${color})`
                     }
                 }
@@ -100,6 +106,7 @@ function Map () {
         const region = ev.target.closest('[id]')
         region.style.fill = 'yellow'
         const id = region.getAttribute('id')
+        updateDisplayed([ id ])
     }
     // Update tooltip when hovering over region
     const _change_tooltip = debounce((region, client_x, client_y) => {
@@ -109,7 +116,7 @@ function Map () {
             ? {
                   display: 'block',
                   top: `${client_y + 15}px`,
-                  left: `${client_x + 15}px`
+                  left: `${client_x + 15}px`,
               }
             : { display: 'none' }
         if (current_region) {
@@ -125,7 +132,7 @@ function Map () {
             set_tooltip_props({
                 name: TERRITORIES[id] || map_data[id].name,
                 data: map_data[id],
-                style
+                style,
             })
         } else set_tooltip_props({ style })
     })

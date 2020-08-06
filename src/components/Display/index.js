@@ -1,32 +1,120 @@
-import styles from './index.module.css'
-import { use_global_state } from '../../state'
 import Chart from 'chart.js'
+import 'chartjs-plugin-colorschemes'
 import { useRef, useEffect, useState } from 'react'
-import Title from '../Title'
-import { tuples } from '../../shared'
+
+import styles from './index.module.css'
+import { tuples, format_date } from '../../shared'
+import { query_api } from '../../data/api_query'
 
 function Display ({ geoCodes }) {
     //
     // State
     //
 
-    const [ geoData, setGeoData ] = useState(null)
+    const [ geoData, setGeoData ] = useState({})
+
+    //
+    // Handlers
+    //
+
+    function updateGeoData (data) {
+        const newGeoData = { ...geoData, ...data }
+        setGeoData(newGeoData)
+    }
 
     //
     // Data fetching
     //
 
-    useEffect(() => {
-        const queryString = geoCodes.join(',')
-        query_api('datapoints', queryString).then((res) => {
-            const consObj = (a, [ k, v ]) => ((a[k] = v) || true) && a
-            const data = Object.entries(res.data).reduce(consObj, {})
-            setGeoData(data)
-        })
-    }, [])
+    useEffect(
+        () => {
+            if (geoCodes.length < 1) return
+            const queryCodes = geoCodes
+                .filter((geoCode) => !geoData[geoCode])
+                .map((s) => s.toUpperCase())
+            if (queryCodes.length < 1) return
+
+            const queryString = `geo=${queryCodes.join(',')}`
+            query_api('datapoints', queryString).then((res) => {
+                const consObj = (a, [ k, v ]) => ((a[k] = v) || true) && a
+                const data = Object.entries(res.data).reduce(consObj, {})
+                updateGeoData(data)
+            })
+        },
+        [ geoCodes ]
+    )
+
+    //
+    // Chart construction
+    //
 
     const canvasRef = useRef(null)
+    useEffect(
+        () => {
+            // Prepare data
+            const _labels = []
+            const dataCases = {}
+            const dataDeaths = {}
+            for (const rows of Object.values(geoData)) {
+                for (const r of rows) {
+                    const date = format_date(new Date(r.time))
+                    _labels.push(date)
+                    if (!dataCases[date]) {
+                        dataCases[date] = { [r.geo_code]: r.cases }
+                    } else {
+                        dataCases[date][r.geo_code] = r.cases
+                    }
+                    if (!dataDeaths[date]) {
+                        dataDeaths[date] = { [r.geo_code]: r.deaths }
+                    } else {
+                        dataDeaths[date][r.geo_code] = r.deaths
+                    }
+                }
+            }
+            const labels = [ ...new Set(_labels) ].sort().map((dateString) => {
+                const time = new Date(dateString)
+                const [ mm, dd ] = [ time.getMonth(), time.getDate() ]
+                const label = `${MONTHS[mm]} ${dd}`
+                return label
+            })
+            const datasets = Object.keys(geoData).map((geoCode) => {
+                const dates = Object.keys(dataCases).sort()
+                const data = dates.map(
+                    (dateString) => dataCases[dateString][geoCode] || null
+                )
+                return {
+                    label: geoCode,
+                    data,
+                }
+            })
 
+            console.log(dataCases)
+            console.log(datasets)
+
+            // Draw chart
+            const ctx = canvasRef.current.getContext('2d')
+            for (const dataset of datasets) {
+                const chart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels,
+                        datasets: [ dataset ],
+                    },
+                    options: {
+                        legend: { display: true },
+                        plugins: {
+                            colorschemes: {
+                                scheme: 'brewer.DarkTwo8',
+                            },
+                        },
+                    },
+                })
+            }
+        },
+        [ geoData ]
+    )
+
+    /*
     useEffect(function () {
         const averaging_scope = 3
         const data_labels = []
@@ -69,9 +157,10 @@ function Display ({ geoCodes }) {
             },
         })
     }, [])
+    */
+
     return (
         <div className={styles.container}>
-            <Title />
             <canvas ref={canvasRef} />
         </div>
     )

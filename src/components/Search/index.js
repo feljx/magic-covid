@@ -7,13 +7,15 @@ import styles from './index.module.css'
 // Search
 //
 
-function Search ({ items }) {
+function Search ({ items, updateDisplayed }) {
     // State
     const EMPTY = ''
     const [ input, setInput ] = useState(EMPTY)
     const [ selected, setSelected ] = useState([])
-    const forInput = (item) => item.name.toLowerCase().includes(input.toLowerCase())
-    const listItems = input === EMPTY ? selected : items.filter(forInput).slice(0, 10)
+    const forInput = (item) =>
+        item.name.toLowerCase().includes(input.toLowerCase())
+    const listItems =
+        input === EMPTY ? selected : items.filter(forInput).slice(0, 10)
 
     // Event Handlers
     const updateInput = (ev) => {
@@ -22,14 +24,18 @@ function Search ({ items }) {
 
     const updateSelected = (item) => () => {
         if (!selected.includes(item)) {
-            setSelected([ ...selected, item ])
+            const newItems = [ ...selected, item ]
+            setSelected(newItems)
+            updateDisplayed(newItems)
         }
         setInput(EMPTY)
     }
 
     const removeSelected = (item) => () => {
         if (selected.includes(item)) {
-            setSelected(selected.filter((_item) => _item !== item))
+            const newItems = selected.filter((_item) => _item !== item)
+            setSelected(newItems)
+            updateDisplayed(newItems)
         }
     }
 
@@ -92,7 +98,9 @@ function List ({ children, showSelected, updateSelected, removeSelected }) {
 
     return (
         <ul className={styles.list}>
-            {children.map((item) => <ListItem key={item.geo_code} data={item} />)}
+            {children.map((item) => (
+                <ListItem key={item.geo_code} data={item} />
+            ))}
         </ul>
     )
 }
