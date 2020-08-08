@@ -27,7 +27,7 @@ interface Zeitops {
 // Zeitpunk factory
 //
 
-function Zeitpunk (dateOrMs?: Zeit) {
+export default function Zeitpunk (dateOrMs?: Zeit) {
     const zeit = dateOrMs instanceof Date ? dateOrMs.valueOf() : dateOrMs
     const gregorian = unixToDays(zeit)
     const [ sy, sm, sd ] = gregorian.map((n) => String(n).padStart(2, '0'))
@@ -64,7 +64,7 @@ function Zeitop (zeit, operator, factor) {
 // Helpers
 //
 
-function unixToDays (date: Zeit): number[] {
+function unixToDays (date: Zeit = new Date()): number[] {
     const ms =
         date instanceof Date
             ? date.valueOf() + date.getTimezoneOffset() * 60000
